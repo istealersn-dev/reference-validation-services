@@ -7,6 +7,7 @@ import { OrcidIcon } from './icons/OrcidIcon';
 interface LoginFormProps {
   onRegisterClick: () => void;
   onForgotPasswordClick: () => void;
+  onLoginSuccess?: () => void;
 }
 
 interface FormErrors {
@@ -15,7 +16,7 @@ interface FormErrors {
   form?: string;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotPasswordClick }) => {
+export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotPasswordClick, onLoginSuccess }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
@@ -62,13 +63,14 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // Mock validation logic for demonstration purposes
-      // Fail if email contains 'fail' or password is too short
       if (formData.email.toLowerCase().includes('fail') || formData.password.length < 6) {
         throw new Error('Invalid credentials');
       }
 
-      // Success simulation
-      alert('Login successful!');
+      // Success logic
+      if (onLoginSuccess) {
+        onLoginSuccess();
+      }
     } catch (err) {
       setErrors(prev => ({
         ...prev,
@@ -91,7 +93,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsLoading(false);
-    alert('Redirecting to ORCID...');
+    // For demo, just log them in
+    if (onLoginSuccess) {
+        onLoginSuccess();
+    }
   };
 
   return (

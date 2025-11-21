@@ -3,9 +3,24 @@ import { LoginForm } from './components/LoginForm';
 import { RegistrationForm } from './components/RegistrationForm';
 import { PasswordResetForm } from './components/PasswordResetForm';
 import { BrandSidebar } from './components/BrandSidebar';
+import { Dashboard } from './components/dashboard/Dashboard';
 
 const App: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentView, setCurrentView] = useState<'login' | 'register' | 'forgot-password'>('login');
+
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setCurrentView('login');
+  };
+
+  if (isAuthenticated) {
+    return <Dashboard onLogout={handleLogout} />;
+  }
 
   return (
     <div className="min-h-screen w-full flex overflow-hidden bg-white selection:bg-brand-100 selection:text-brand-900">
@@ -31,6 +46,7 @@ const App: React.FC = () => {
             <LoginForm 
               onRegisterClick={() => setCurrentView('register')} 
               onForgotPasswordClick={() => setCurrentView('forgot-password')}
+              onLoginSuccess={handleLoginSuccess}
             />
           ) : currentView === 'register' ? (
             <RegistrationForm onLoginClick={() => setCurrentView('login')} />
