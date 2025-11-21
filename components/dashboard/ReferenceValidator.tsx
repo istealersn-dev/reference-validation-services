@@ -46,27 +46,17 @@ export const ReferenceValidator: React.FC = () => {
     setProgress(0);
     
     // Simulate Upload
-    for (let i = 0; i <= 100; i += 5) {
+    for (let i = 0; i <= 100; i += 8) {
         setProgress(i);
-        await new Promise(r => setTimeout(r, 100));
+        await new Promise(r => setTimeout(r, 150));
     }
 
     // Processing Phase
     setStatus('processing');
-    setProgress(0);
     
-    // Simulate Processing - Granular updates
-    for (let i = 0; i <= 100; i++) {
-        setProgress(i);
-        // Variable speed to make it look realistic: fast start, slow middle, fast finish
-        let delay = 20;
-        if (i > 20 && i < 60) delay = 50 + Math.random() * 40;
-        else if (i > 80) delay = 15;
-        
-        await new Promise(r => setTimeout(r, delay));
-    }
+    // Simulate Processing (Indeterminate wait)
+    await new Promise(r => setTimeout(r, 2000));
 
-    await new Promise(r => setTimeout(r, 500)); // Small pause at 100%
     setStatus('complete');
   };
 
@@ -176,23 +166,25 @@ export const ReferenceValidator: React.FC = () => {
                         }
                     </p>
                     
-                    <div className="w-full max-w-md">
-                        <div className="flex justify-between text-xs font-medium text-gray-500 mb-2">
-                            <span>Progress</span>
-                            <span>{progress}%</span>
+                    {status === 'uploading' ? (
+                        <div className="w-full max-w-md">
+                            <div className="flex justify-between text-xs font-medium text-gray-500 mb-2">
+                                <span>Upload Progress</span>
+                                <span>{progress}%</span>
+                            </div>
+                            <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                                <div 
+                                    className="bg-brand-600 h-2 rounded-full transition-all duration-100 ease-linear"
+                                    style={{ width: `${progress}%` }}
+                                ></div>
+                            </div>
                         </div>
-                        <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                            <div 
-                                className="bg-brand-600 h-2 rounded-full transition-all duration-100 ease-linear"
-                                style={{ width: `${progress}%` }}
-                            ></div>
+                    ) : (
+                         <div className="flex items-center justify-center space-x-2 text-brand-600 bg-brand-50 px-4 py-2 rounded-full">
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                            <span className="text-sm font-medium">Processing content...</span>
                         </div>
-                        {status === 'processing' && (
-                             <p className="text-xs text-brand-500 mt-3 animate-pulse">
-                                Analyzing citation {Math.min(Math.floor((progress / 100) * stats.total), stats.total)} of {stats.total}...
-                             </p>
-                        )}
-                    </div>
+                    )}
                 </div>
             )}
 
@@ -236,10 +228,16 @@ export const ReferenceValidator: React.FC = () => {
                     </div>
 
                     {/* Actions Area */}
-                    <div className="bg-gray-50 rounded-xl p-8 border border-gray-200 flex flex-col md:flex-row items-center justify-between gap-6">
-                        <div>
-                            <h4 className="text-lg font-semibold text-gray-900">Download Reports</h4>
-                            <p className="text-gray-500 text-sm mt-1">Export your validation results for further review.</p>
+                    <div className="bg-gray-50 rounded-xl p-8 border border-gray-200">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                            <div>
+                                <h4 className="text-lg font-semibold text-gray-900">Download Reports</h4>
+                                <p className="text-gray-500 text-sm mt-1">Export your validation results for further review.</p>
+                            </div>
+                             <Button onClick={reset}>
+                                <RefreshCw className="w-4 h-4 mr-2" />
+                                Validate Another
+                            </Button>
                         </div>
                         <div className="flex flex-wrap gap-3">
                             <Button variant="outline" className="bg-white">
@@ -249,10 +247,6 @@ export const ReferenceValidator: React.FC = () => {
                             <Button variant="outline" className="bg-white border-orange-200 text-orange-700 hover:bg-orange-50 hover:border-orange-300">
                                 <Download className="w-4 h-4 mr-2" />
                                 Not Validated (.csv)
-                            </Button>
-                            <Button onClick={reset} className="ml-2">
-                                <RefreshCw className="w-4 h-4 mr-2" />
-                                Validate Another
                             </Button>
                         </div>
                     </div>
