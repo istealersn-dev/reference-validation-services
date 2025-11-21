@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import { UploadCloud, FileText, CheckCircle, XCircle, Download, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '../ui/Button';
 
@@ -8,6 +8,7 @@ export const ReferenceValidator: React.FC = () => {
   const [status, setStatus] = useState<ValidationStatus>('idle');
   const [file, setFile] = useState<File | null>(null);
   const [progress, setProgress] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Mock Data
   const stats = {
@@ -18,6 +19,7 @@ export const ReferenceValidator: React.FC = () => {
 
   const handleFileDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     const droppedFile = e.dataTransfer.files[0];
     if (droppedFile) setFile(droppedFile);
   };
@@ -25,6 +27,14 @@ export const ReferenceValidator: React.FC = () => {
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
+    }
+  };
+
+  const handleRemoveFile = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setFile(null);
+    if (fileInputRef.current) {
+        fileInputRef.current.value = '';
     }
   };
 
@@ -64,6 +74,9 @@ export const ReferenceValidator: React.FC = () => {
     setFile(null);
     setStatus('idle');
     setProgress(0);
+    if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+    }
   };
 
   return (
@@ -96,16 +109,18 @@ export const ReferenceValidator: React.FC = () => {
                             : 'border-gray-300 hover:border-brand-400 hover:bg-gray-50'
                         }
                     `}
-                    onDragOver={(e) => e.preventDefault()}
+                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
                     onDrop={handleFileDrop}
-                    onClick={() => document.getElementById('file-upload')?.click()}
+                    onClick={() => fileInputRef.current?.click()}
                 >
                     <input 
+                        ref={fileInputRef}
                         id="file-upload" 
                         type="file" 
                         className="hidden" 
                         accept=".csv,.docx,.bib"
-                        onChange={handleFileInput} 
+                        onChange={handleFileInput}
+                        onClick={(e) => e.stopPropagation()} 
                     />
                     
                     <div className="flex flex-col items-center">
@@ -125,7 +140,7 @@ export const ReferenceValidator: React.FC = () => {
                                 </Button>
                                 <button 
                                     className="mt-4 text-sm text-red-500 hover:underline"
-                                    onClick={(e) => { e.stopPropagation(); setFile(null); }}
+                                    onClick={handleRemoveFile}
                                 >
                                     Remove file
                                 </button>
