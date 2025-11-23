@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle, X } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { OrcidIcon } from '@/components/icons/OrcidIcon';
@@ -102,7 +102,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
         await new Promise((resolve, reject) => setTimeout(() => {
              // Randomly simulate failure for demonstration if 'fail' is in email input (optional trick) 
              // or just standard success for happy path.
-             // Uncomment next line to test error state:
+             // Uncomment next line to test error state manually if needed:
              // reject(new Error("ORCID_TIMEOUT")); 
              resolve(true);
         }, 2000));
@@ -145,11 +145,26 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
           )}
         </Button>
         
-        {/* Specific ORCID Error Feedback */}
+        {/* Specific ORCID Error Feedback - Prominent & Dismissible */}
         {orcidError && (
-            <div className="mt-3 p-3 rounded-lg bg-red-50 border border-red-100 flex items-start space-x-2 animate-fade-in">
-                <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
-                <p className="text-xs text-red-600 font-medium">{orcidError}</p>
+            <div 
+                role="alert" 
+                className="mt-4 p-4 rounded-lg bg-red-50 border border-red-200 flex items-start justify-between shadow-sm animate-fade-in relative"
+            >
+                <div className="flex gap-3">
+                    <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
+                    <div className="flex-1">
+                        <h4 className="text-sm font-bold text-red-900">Authentication Failed</h4>
+                        <p className="text-sm text-red-800 mt-1 leading-relaxed">{orcidError}</p>
+                    </div>
+                </div>
+                <button 
+                    onClick={() => setOrcidError('')}
+                    className="text-red-500 hover:text-red-800 hover:bg-red-100 rounded-md p-1.5 transition-colors absolute top-2 right-2 sm:relative sm:top-auto sm:right-auto sm:self-start sm:-mr-1 sm:-mt-1"
+                    aria-label="Dismiss error message"
+                >
+                    <X className="w-4 h-4" />
+                </button>
             </div>
         )}
       </div>

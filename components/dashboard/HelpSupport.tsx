@@ -30,7 +30,7 @@ const categoriesData: Category[] = [
         title: 'Setting up your account',
         content: (
           <div className="space-y-4 text-gray-600 leading-relaxed">
-            <h3 className="text-xl font-bold text-gray-900">Welcome to Publisher Portal</h3>
+            <h3 className="text-xl font-bold text-gray-900">Welcome to Kriyadocs RVS</h3>
             <p>
               We are thrilled to have you on board. This guide will walk you through the initial steps to configure your profile and organization settings.
             </p>

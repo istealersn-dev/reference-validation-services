@@ -5,7 +5,8 @@ import { PasswordResetForm } from '@/components/PasswordResetForm';
 import { BrandSidebar } from '@/components/BrandSidebar';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { ContactForm } from '@/components/ContactForm';
-import { X } from 'lucide-react';
+import { Modal } from '@/components/ui/Modal';
+import { CheckCircle2 } from 'lucide-react';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -40,11 +41,9 @@ const App: React.FC = () => {
           {/* Mobile Logo / Brand Header */}
           <header className="lg:hidden mb-10 text-center">
             <div className="h-12 w-12 bg-brand-600 rounded-xl mx-auto mb-4 shadow-lg shadow-brand-600/30 flex items-center justify-center text-white">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
+              <CheckCircle2 className="w-8 h-8" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 font-sans">Publisher Portal</h1>
+            <h1 className="text-2xl font-bold text-gray-900 font-sans">Kriyadocs RVS</h1>
           </header>
           
           {currentView === 'login' ? (
@@ -68,33 +67,22 @@ const App: React.FC = () => {
 
         {/* Footer decoration - Pushed to bottom via flex */}
         <footer className="mt-auto pt-6 text-center w-full text-xs text-gray-300 lg:text-gray-400">
-          &copy; {new Date().getFullYear()} Scholarly Publishing Tech. All rights reserved.
+          &copy; {new Date().getFullYear()} Kriyadocs RVS. All rights reserved.
         </footer>
       </main>
 
       {/* Support Modal */}
-      {isSupportModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up relative">
-            <div className="p-6 border-b border-gray-100 flex justify-between items-start bg-gray-50/50">
-              <div>
-                 <h3 className="text-xl font-bold text-gray-900">Contact Support</h3>
-                 <p className="text-sm text-gray-500 mt-1">Can't find what you need? Send us a message.</p>
-              </div>
-              <button 
-                onClick={() => setIsSupportModalOpen(false)} 
-                className="text-gray-400 hover:text-gray-600 transition-colors p-1"
-                aria-label="Close modal"
-              >
-                <X size={24} />
-              </button>
-            </div>
-            <div className="p-6">
-              <ContactForm />
-            </div>
-          </div>
+      <Modal
+        isOpen={isSupportModalOpen}
+        onClose={() => setIsSupportModalOpen(false)}
+        title="Contact Support"
+        className="max-w-lg"
+      >
+        <div className="mb-6">
+           <p className="text-sm text-gray-500">Can't find what you need? Send us a message.</p>
         </div>
-      )}
+        <ContactForm />
+      </Modal>
     </div>
   );
 };

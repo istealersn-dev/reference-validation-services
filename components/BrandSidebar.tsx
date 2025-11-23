@@ -1,4 +1,5 @@
 import React from 'react';
+import { CheckCircle2 } from 'lucide-react';
 
 export const BrandSidebar: React.FC = () => {
   return (
@@ -30,20 +31,18 @@ export const BrandSidebar: React.FC = () => {
       <div className="relative z-10">
         <header className="flex items-center space-x-3 mb-8">
            <div className="h-10 w-10 bg-white/10 backdrop-blur-md rounded-lg border border-white/20 flex items-center justify-center shadow-lg">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-              </svg>
+              <CheckCircle2 className="w-6 h-6 text-white" />
            </div>
-           <span className="text-xl font-bold tracking-wide text-white font-sans">KriyaDocs Publisher</span>
+           <span className="text-xl font-bold tracking-wide text-white font-sans">Kriyadocs RVS</span>
         </header>
       </div>
 
       <div className="relative z-10 max-w-md">
         <h2 className="text-4xl font-bold text-white mb-6 leading-snug tracking-tight">
-          Transforming scholarly publishing.
+          Reference Validation System.
         </h2>
         <p className="text-brand-100 text-lg leading-relaxed mb-8 font-light opacity-90">
-          Accelerate your publishing workflow with our intelligent, document-centric platform designed for the modern era of research.
+          Ensure manuscript integrity with our intelligent validation platform designed for modern scholarly publishing.
         </p>
         
         <div className="flex items-center space-x-4 pt-8 border-t border-white/10">

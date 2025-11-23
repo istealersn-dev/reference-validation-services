@@ -1,7 +1,8 @@
 import React, { useState, useRef } from 'react';
-import { User, CreditCard, AlertTriangle, Camera, Mail, MapPin, Globe, Shield, Trash2, Check, CreditCard as CardIcon, Briefcase, ChevronDown, X, AlertCircle } from 'lucide-react';
+import { User, CreditCard, AlertTriangle, Camera, Mail, Globe, Shield, Trash2, Check, CreditCard as CardIcon, Briefcase, ChevronDown, AlertCircle } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { Modal } from '@/components/ui/Modal';
 import { OrcidIcon } from '@/components/icons/OrcidIcon';
 
 type Tab = 'profile' | 'billing' | 'misc';
@@ -70,7 +71,6 @@ export const Settings: React.FC<SettingsProps> = ({
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsLoading(false);
     setShowClearHistoryModal(false);
-    // Ideally, trigger a toast notification here
   };
 
   const handleDeleteAccountClick = () => {
@@ -156,7 +156,7 @@ export const Settings: React.FC<SettingsProps> = ({
       
       {/* --- PROFILE TAB --- */}
       {activeTab === 'profile' && (
-        <section role="tabpanel" className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        <section role="tabpanel" className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden animate-fade-in-up">
           <div className="p-6 md:p-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-6">Personal Information</h3>
             
@@ -313,7 +313,7 @@ export const Settings: React.FC<SettingsProps> = ({
 
       {/* --- BILLING TAB --- */}
       {activeTab === 'billing' && (
-        <section role="tabpanel" className="space-y-6">
+        <section role="tabpanel" className="space-y-6 animate-fade-in-up">
             {/* Current Plan Card */}
             <article className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden p-6 md:p-8 relative">
                 <div className="absolute top-0 right-0 bg-gradient-to-bl from-brand-100 to-transparent w-32 h-32 rounded-bl-full opacity-50 pointer-events-none"></div>
@@ -388,7 +388,7 @@ export const Settings: React.FC<SettingsProps> = ({
 
       {/* --- MISC TAB (Danger Zone) --- */}
       {activeTab === 'misc' && (
-        <section role="tabpanel" className="bg-white border border-red-100 rounded-2xl shadow-sm overflow-hidden">
+        <section role="tabpanel" className="bg-white border border-red-100 rounded-2xl shadow-sm overflow-hidden animate-fade-in-up">
             <div className="p-6 md:p-8">
                 <div className="flex items-center mb-6">
                     <div className="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center mr-4">
@@ -443,92 +443,84 @@ export const Settings: React.FC<SettingsProps> = ({
       )}
 
       {/* Confirmation Modal: Clear History */}
-      {showClearHistoryModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
-                <div className="p-6 md:p-8">
-                    <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-4 mx-auto md:mx-0">
-                        <AlertTriangle className="w-6 h-6 text-red-600" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 text-center md:text-left">Clear Validation History?</h3>
-                    <p className="text-gray-500 mt-2 text-center md:text-left">
-                        Are you sure you want to delete all validation reports? This action cannot be undone.
-                    </p>
-                    <div className="mt-8 flex justify-end gap-3">
-                        <Button variant="outline" onClick={() => setShowClearHistoryModal(false)}>
-                            Cancel
-                        </Button>
-                        <Button 
-                            className="bg-red-600 hover:bg-red-700 text-white border-transparent"
-                            isLoading={isLoading}
-                            onClick={confirmClearHistory}
-                        >
-                            Yes, Clear History
-                        </Button>
-                    </div>
-                </div>
+      <Modal
+        isOpen={showClearHistoryModal}
+        onClose={() => setShowClearHistoryModal(false)}
+        className="max-w-md"
+      >
+        <div className="text-center md:text-left">
+            <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-4 mx-auto md:mx-0">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Clear Validation History?</h3>
+            <p className="text-gray-500 leading-relaxed mb-8">
+                Are you sure you want to delete all validation reports? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={() => setShowClearHistoryModal(false)}>
+                    Cancel
+                </Button>
+                <Button 
+                    className="bg-red-600 hover:bg-red-700 text-white border-transparent"
+                    isLoading={isLoading}
+                    onClick={confirmClearHistory}
+                >
+                    Yes, Clear History
+                </Button>
             </div>
         </div>
-      )}
+      </Modal>
 
       {/* Confirmation Modal: Delete Account */}
-      {showDeleteAccountModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up">
-                <div className="p-6 md:p-8">
-                    <div className="flex items-start justify-between mb-2">
-                        <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center">
-                            <AlertTriangle className="w-6 h-6 text-red-600" />
-                        </div>
-                        <button 
-                            onClick={() => setShowDeleteAccountModal(false)}
-                            className="text-gray-400 hover:text-gray-600"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-                    </div>
-                    
-                    <h3 className="text-xl font-bold text-gray-900 mt-4">Delete Account?</h3>
-                    <p className="text-gray-500 mt-2">
-                        This action is permanent. All your data, subscription, and team access will be wiped immediately.
-                    </p>
-
-                    <div className="mt-6">
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                            To confirm, please type <span className="font-bold select-all">{profile.email}</span>
-                        </label>
-                        <Input 
-                            label=""
-                            id="confirmEmail"
-                            value={deleteConfirmationEmail}
-                            onChange={(e) => {
-                                setDeleteConfirmationEmail(e.target.value);
-                                if(deleteError) setDeleteError('');
-                            }}
-                            error={deleteError}
-                            placeholder={profile.email}
-                            className="mb-0"
-                            autoFocus
-                        />
-                    </div>
-
-                    <div className="mt-8 flex justify-end gap-3">
-                        <Button variant="outline" onClick={() => setShowDeleteAccountModal(false)}>
-                            Cancel
-                        </Button>
-                        <Button 
-                            className="bg-red-600 hover:bg-red-700 text-white border-transparent"
-                            isLoading={isLoading}
-                            onClick={confirmDeleteAccount}
-                            disabled={!deleteConfirmationEmail}
-                        >
-                            Delete Account
-                        </Button>
-                    </div>
+      <Modal
+        isOpen={showDeleteAccountModal}
+        onClose={() => setShowDeleteAccountModal(false)}
+        title="Delete Account"
+        className="max-w-lg"
+      >
+        <div>
+            <div className="bg-red-50 border border-red-100 rounded-lg p-4 flex gap-3 mb-6">
+                <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-red-800">
+                    <p className="font-bold">Warning: This action is permanent.</p>
+                    <p className="mt-1 opacity-90">All your data, including validation history, API keys, and subscription details will be permanently wiped.</p>
                 </div>
             </div>
+
+            <div className="space-y-4">
+                <label className="block text-sm font-medium text-gray-700">
+                    To confirm, please type <span className="font-bold select-all">{profile.email}</span>
+                </label>
+                <Input 
+                    label=""
+                    id="confirmEmail"
+                    value={deleteConfirmationEmail}
+                    onChange={(e) => {
+                        setDeleteConfirmationEmail(e.target.value);
+                        if(deleteError) setDeleteError('');
+                    }}
+                    error={deleteError}
+                    placeholder={profile.email}
+                    className="mb-0"
+                    autoFocus
+                />
+            </div>
+
+            <div className="mt-8 flex justify-end gap-3">
+                <Button variant="outline" onClick={() => setShowDeleteAccountModal(false)}>
+                    Cancel
+                </Button>
+                <Button 
+                    className="bg-red-600 hover:bg-red-700 text-white border-transparent"
+                    isLoading={isLoading}
+                    onClick={confirmDeleteAccount}
+                    disabled={!deleteConfirmationEmail}
+                >
+                    Delete Account
+                </Button>
+            </div>
         </div>
-      )}
+      </Modal>
 
     </section>
   );

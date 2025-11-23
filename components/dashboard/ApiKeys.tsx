@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Key, Plus, Copy, Trash2, Shield, Calendar, Clock, Check, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Modal } from '@/components/ui/Modal';
 
 interface ApiKey {
   id: string;
@@ -172,102 +173,89 @@ export const ApiKeys: React.FC = () => {
       </div>
 
       {/* Create Key Modal */}
-      {isCreating && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden scale-100 animate-fade-in-up">
-                <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                    <h3 id="modal-title" className="text-lg font-bold text-gray-900">
-                        {generatedKey ? 'API Key Created' : 'Create New API Key'}
-                    </h3>
-                    {!generatedKey && (
-                        <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600">
-                            <span className="sr-only">Close</span>
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-                    )}
-                </div>
-
-                <div className="p-6">
-                    {generatedKey ? (
-                        <div className="space-y-4">
-                            <div className="bg-green-50 border border-green-100 rounded-lg p-4 flex gap-3">
-                                <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                                <p className="text-sm text-green-800">
-                                    Success! Your API key has been generated. Copy it now as you won't be able to see it again.
-                                </p>
-                            </div>
-                            
-                            <div>
-                                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Your Secret Key</label>
-                                <div className="flex">
-                                    <input 
-                                        readOnly 
-                                        value={generatedKey} 
-                                        className="flex-1 bg-gray-50 border border-gray-200 rounded-l-lg px-4 py-3 text-sm font-mono text-gray-800 focus:outline-none w-full"
-                                    />
-                                    <button 
-                                        onClick={() => handleCopy(generatedKey, 'modal')}
-                                        className="bg-white border border-l-0 border-gray-200 rounded-r-lg px-4 text-gray-600 hover:bg-gray-50 hover:text-brand-600 transition-colors flex items-center flex-shrink-0"
-                                    >
-                                        {copiedId === 'modal' ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="pt-4 flex justify-end">
-                                <Button onClick={handleCloseModal} fullWidth>Done</Button>
-                            </div>
-                        </div>
-                    ) : (
-                        <form onSubmit={handleGenerate} className="space-y-4">
-                            <p className="text-sm text-gray-500 mb-4">
-                                Give your key a name to identify where it's being used (e.g., "CI/CD Pipeline", "Mobile App").
-                            </p>
-                            <Input 
-                                label="Key Name" 
-                                value={newKeyName}
-                                onChange={(e) => setNewKeyName(e.target.value)}
-                                placeholder="e.g. Production Server"
-                                autoFocus
+      <Modal
+        isOpen={isCreating}
+        onClose={handleCloseModal}
+        title={generatedKey ? 'API Key Created' : 'Create New API Key'}
+        className="max-w-lg"
+      >
+            {generatedKey ? (
+                <div className="space-y-4">
+                    <div className="bg-green-50 border border-green-100 rounded-lg p-4 flex gap-3">
+                        <Check className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                        <p className="text-sm text-green-800">
+                            Success! Your API key has been generated. Copy it now as you won't be able to see it again.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Your Secret Key</label>
+                        <div className="flex">
+                            <input 
+                                readOnly 
+                                value={generatedKey} 
+                                className="flex-1 bg-gray-50 border border-gray-200 rounded-l-lg px-4 py-3 text-sm font-mono text-gray-800 focus:outline-none w-full"
                             />
-                            <div className="pt-2 flex gap-3 justify-end">
-                                <Button type="button" variant="outline" onClick={handleCloseModal}>Cancel</Button>
-                                <Button type="submit" isLoading={isLoading} disabled={!newKeyName.trim()}>Generate Key</Button>
-                            </div>
-                        </form>
-                    )}
+                            <button 
+                                onClick={() => handleCopy(generatedKey, 'modal')}
+                                className="bg-white border border-l-0 border-gray-200 rounded-r-lg px-4 text-gray-600 hover:bg-gray-50 hover:text-brand-600 transition-colors flex items-center flex-shrink-0"
+                            >
+                                {copiedId === 'modal' ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="pt-4 flex justify-end">
+                        <Button onClick={handleCloseModal} fullWidth>Done</Button>
+                    </div>
                 </div>
-            </div>
-        </div>
-      )}
+            ) : (
+                <form onSubmit={handleGenerate} className="space-y-4">
+                    <p className="text-sm text-gray-500 mb-4">
+                        Give your key a name to identify where it's being used (e.g., "CI/CD Pipeline", "Mobile App").
+                    </p>
+                    <Input 
+                        label="Key Name" 
+                        value={newKeyName}
+                        onChange={(e) => setNewKeyName(e.target.value)}
+                        placeholder="e.g. Production Server"
+                        autoFocus
+                    />
+                    <div className="pt-2 flex gap-3 justify-end">
+                        <Button type="button" variant="outline" onClick={handleCloseModal}>Cancel</Button>
+                        <Button type="submit" isLoading={isLoading} disabled={!newKeyName.trim()}>Generate Key</Button>
+                    </div>
+                </form>
+            )}
+      </Modal>
 
       {/* Revoke Confirmation Modal */}
-      {showRevokeModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
-                <div className="p-6 md:p-8">
-                    <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-4 mx-auto md:mx-0">
-                        <AlertTriangle className="w-6 h-6 text-red-600" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 text-center md:text-left">Revoke API Key?</h3>
-                    <p className="text-gray-500 mt-2 text-center md:text-left leading-relaxed">
-                        Are you sure you want to revoke this API key? This action cannot be undone and any applications using this key will stop working immediately.
-                    </p>
-                    <div className="mt-8 flex justify-end gap-3">
-                        <Button variant="outline" onClick={() => setShowRevokeModal(false)}>
-                            Cancel
-                        </Button>
-                        <Button 
-                            className="bg-red-600 hover:bg-red-700 text-white border-transparent"
-                            onClick={confirmRevoke}
-                        >
-                            Yes, Revoke Key
-                        </Button>
-                    </div>
-                </div>
+      <Modal
+        isOpen={showRevokeModal}
+        onClose={() => setShowRevokeModal(false)}
+        className="max-w-md"
+      >
+        <div className="text-center md:text-left">
+            <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-4 mx-auto md:mx-0">
+                <AlertTriangle className="w-6 h-6 text-red-600" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Revoke API Key?</h3>
+            <p className="text-gray-500 leading-relaxed mb-8">
+                Are you sure you want to revoke this API key? This action cannot be undone and any applications using this key will stop working immediately.
+            </p>
+            <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={() => setShowRevokeModal(false)}>
+                    Cancel
+                </Button>
+                <Button 
+                    className="bg-red-600 hover:bg-red-700 text-white border-transparent"
+                    onClick={confirmRevoke}
+                >
+                    Yes, Revoke Key
+                </Button>
             </div>
         </div>
-      )}
+      </Modal>
     </section>
   );
 };
