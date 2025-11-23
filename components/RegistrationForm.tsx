@@ -36,6 +36,10 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // ORCID Specific State
+  const [isOrcidLoading, setIsOrcidLoading] = useState(false);
+  const [orcidError, setOrcidError] = useState('');
+
   const validateForm = () => {
     const newErrors: FormErrors = {};
     let isValid = true;
@@ -123,10 +127,25 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
   };
 
   const handleOrcidSignup = async () => {
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    alert('Redirecting to ORCID for signup...');
+    setIsOrcidLoading(true);
+    setOrcidError('');
+
+    try {
+        await new Promise((resolve, reject) => setTimeout(() => {
+            // resolve(true);
+            // Simulate random error for demonstration
+            if (Math.random() > 0.9) {
+                reject(new Error("Network Error"));
+            } else {
+                resolve(true);
+            }
+        }, 2000));
+        alert('Redirecting to ORCID for signup...');
+    } catch (e) {
+        setOrcidError("Failed to initiate ORCID signup. Please check your connection and try again.");
+    } finally {
+        setIsOrcidLoading(false);
+    }
   };
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
@@ -160,15 +179,29 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
         <Button 
           variant="outline" 
           fullWidth 
+          isLoading={isOrcidLoading}
           className="h-12 group relative border-gray-200 hover:border-orcid hover:bg-orcid/5 hover:shadow-lg hover:shadow-orcid/20 hover:-translate-y-0.5 transition-all duration-300"
           onClick={handleOrcidSignup}
           type="button"
+          disabled={isLoading}
         >
-          <div className="flex items-center justify-center space-x-3">
-            <OrcidIcon className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:scale-110" />
-            <span className="text-gray-700 font-semibold group-hover:text-orcid transition-colors">Sign up with ORCID</span>
-          </div>
+          {isOrcidLoading ? (
+             <span className="text-gray-600 font-medium">Connecting...</span>
+          ) : (
+            <div className="flex items-center justify-center space-x-3">
+                <OrcidIcon className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:scale-110" />
+                <span className="text-gray-700 font-semibold group-hover:text-orcid transition-colors">Sign up with ORCID</span>
+            </div>
+          )}
         </Button>
+        
+        {/* Specific ORCID Error Feedback */}
+        {orcidError && (
+            <div className="mt-3 p-3 rounded-lg bg-red-50 border border-red-100 flex items-start space-x-2 animate-fade-in">
+                <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-red-600 font-medium">{orcidError}</p>
+            </div>
+        )}
       </div>
 
       <div className="relative py-2">
@@ -199,6 +232,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
           onChange={(e) => handleInputChange('name', e.target.value)}
           error={errors.name}
           placeholder="e.g. John Smith"
+          disabled={isOrcidLoading || isLoading}
         />
 
         <Input
@@ -210,6 +244,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
           onChange={(e) => handleInputChange('email', e.target.value)}
           error={errors.email}
           placeholder="name@company.com"
+          disabled={isOrcidLoading || isLoading}
         />
 
         <div>
@@ -223,6 +258,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
             error={errors.password}
             className="mb-2"
             placeholder="Create a password"
+            disabled={isOrcidLoading || isLoading}
             rightElement={
               <button
                 type="button"
@@ -266,6 +302,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
           onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
           error={errors.confirmPassword}
           placeholder="Confirm your password"
+          disabled={isOrcidLoading || isLoading}
           rightElement={
             <button
               type="button"
@@ -286,6 +323,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
           onChange={(e) => handleInputChange('company', e.target.value)}
           error={errors.company}
           placeholder="e.g. Acme Publishing"
+          disabled={isOrcidLoading || isLoading}
         />
 
         {/* Consent Checkboxes */}
@@ -302,6 +340,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
                     setConsents(prev => ({ ...prev, terms: e.target.checked }));
                     if(errors.terms) setErrors(prev => ({ ...prev, terms: undefined }));
                 }}
+                disabled={isOrcidLoading || isLoading}
               />
               <svg className="pointer-events-none absolute left-0.5 top-1 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity" viewBox="0 0 14 14" fill="none">
                  <path d="M3 8L6 11L11 3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -326,6 +365,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
                 className="peer h-4 w-4 cursor-pointer appearance-none rounded border border-gray-300 shadow-sm checked:border-brand-600 checked:bg-brand-600 focus:ring-2 focus:ring-brand-500/20 transition-all"
                 checked={consents.marketing}
                 onChange={(e) => setConsents(prev => ({ ...prev, marketing: e.target.checked }))}
+                disabled={isOrcidLoading || isLoading}
               />
                <svg className="pointer-events-none absolute left-0.5 top-1 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity" viewBox="0 0 14 14" fill="none">
                  <path d="M3 8L6 11L11 3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -339,7 +379,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
           </div>
         </div>
 
-        <Button type="submit" fullWidth isLoading={isLoading} className="h-12 text-base shadow-brand-600/25 hover:shadow-brand-600/40 mt-2">
+        <Button type="submit" fullWidth isLoading={isLoading} disabled={isOrcidLoading} className="h-12 text-base shadow-brand-600/25 hover:shadow-brand-600/40 mt-2">
           <span className="mr-2">Sign Up</span>
           {!isLoading && <ArrowRight size={18} />}
         </Button>

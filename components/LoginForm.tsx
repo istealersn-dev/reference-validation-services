@@ -23,6 +23,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
   const [isLoading, setIsLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
+  // ORCID Specific State
+  const [isOrcidLoading, setIsOrcidLoading] = useState(false);
+  const [orcidError, setOrcidError] = useState('');
+
   const validateForm = () => {
     const newErrors: FormErrors = {};
     let isValid = true;
@@ -90,12 +94,26 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
   };
 
   const handleOrcidLogin = async () => {
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setIsLoading(false);
-    // For demo, just log them in
-    if (onLoginSuccess) {
-        onLoginSuccess();
+    setIsOrcidLoading(true);
+    setOrcidError('');
+    
+    try {
+        // Simulate OAuth Handshake
+        await new Promise((resolve, reject) => setTimeout(() => {
+             // Randomly simulate failure for demonstration if 'fail' is in email input (optional trick) 
+             // or just standard success for happy path.
+             // Uncomment next line to test error state:
+             // reject(new Error("ORCID_TIMEOUT")); 
+             resolve(true);
+        }, 2000));
+        
+        if (onLoginSuccess) {
+            onLoginSuccess();
+        }
+    } catch (error) {
+        setOrcidError("Unable to authenticate with ORCID. Please try again or use your email credentials.");
+    } finally {
+        setIsOrcidLoading(false);
     }
   };
 
@@ -111,15 +129,29 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
         <Button 
           variant="outline" 
           fullWidth 
+          isLoading={isOrcidLoading}
           className="h-12 group relative border-gray-200 hover:border-orcid hover:bg-orcid/5 hover:shadow-lg hover:shadow-orcid/20 hover:-translate-y-0.5 transition-all duration-300"
           onClick={handleOrcidLogin}
           type="button"
+          disabled={isLoading}
         >
-          <div className="flex items-center justify-center space-x-3">
-            <OrcidIcon className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:scale-110" />
-            <span className="text-gray-700 font-semibold group-hover:text-orcid transition-colors">Sign in with ORCID</span>
-          </div>
+          {isOrcidLoading ? (
+             <span className="text-gray-600 font-medium">Connecting to ORCID...</span>
+          ) : (
+             <div className="flex items-center justify-center space-x-3">
+                <OrcidIcon className="w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 group-hover:scale-110" />
+                <span className="text-gray-700 font-semibold group-hover:text-orcid transition-colors">Sign in with ORCID</span>
+             </div>
+          )}
         </Button>
+        
+        {/* Specific ORCID Error Feedback */}
+        {orcidError && (
+            <div className="mt-3 p-3 rounded-lg bg-red-50 border border-red-100 flex items-start space-x-2 animate-fade-in">
+                <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-red-600 font-medium">{orcidError}</p>
+            </div>
+        )}
       </div>
 
       <div className="relative py-2">
@@ -131,7 +163,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
         </div>
       </div>
 
-      {/* General Error Alert */}
+      {/* General Form Error Alert */}
       {errors.form && (
         <div className="p-4 rounded-lg bg-red-50 border border-red-100 flex items-start space-x-3 animate-fade-in">
           <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
@@ -152,6 +184,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
           error={errors.email}
           autoComplete="username"
           placeholder="name@company.com"
+          disabled={isOrcidLoading || isLoading}
         />
         
         <Input
@@ -164,6 +197,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
           error={errors.password}
           autoComplete="current-password"
           placeholder="Enter your password"
+          disabled={isOrcidLoading || isLoading}
           rightElement={
             <button
               type="button"
@@ -184,6 +218,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
                     className="peer h-4 w-4 cursor-pointer appearance-none rounded border border-gray-300 shadow-sm checked:border-brand-600 checked:bg-brand-600 focus:ring-2 focus:ring-brand-500/20 transition-all"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
+                    disabled={isOrcidLoading || isLoading}
                 />
                 <svg className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity" viewBox="0 0 14 14" fill="none">
                     <path d="M3 8L6 11L11 3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -196,12 +231,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
             type="button"
             onClick={onForgotPasswordClick}
             className="text-sm font-semibold text-brand-600 hover:text-brand-700 hover:underline decoration-brand-500/30 underline-offset-4 transition-all"
+            disabled={isOrcidLoading || isLoading}
           >
             Forgot password?
           </button>
         </div>
 
-        <Button type="submit" fullWidth isLoading={isLoading} className="h-12 text-base shadow-brand-600/25 hover:shadow-brand-600/40 mt-2">
+        <Button type="submit" fullWidth isLoading={isLoading} disabled={isOrcidLoading} className="h-12 text-base shadow-brand-600/25 hover:shadow-brand-600/40 mt-2">
           <span className="mr-2">Sign In</span>
           {!isLoading && <ArrowRight size={18} />}
         </Button>

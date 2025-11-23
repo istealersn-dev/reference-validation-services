@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Search, Book, MessageCircle, FileText, ChevronRight, ChevronDown, Send, Zap, CreditCard, Layout, CheckCircle, ChevronLeft, Home, ArrowRight, X } from 'lucide-react';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
+import { Search, Book, MessageCircle, FileText, ChevronRight, ChevronDown, Zap, CreditCard, Layout, ChevronLeft, Home, ArrowRight, X } from 'lucide-react';
+import { ContactForm } from '@/components/ContactForm';
 
 // --- Types & Data ---
 
@@ -65,6 +64,33 @@ const categoriesData: Category[] = [
         )
       },
       {
+        id: 'upload-bibtex',
+        title: 'How to upload a BibTeX file correctly',
+        content: (
+          <div className="space-y-4 text-gray-600 leading-relaxed">
+             <p>Ensure your <code>.bib</code> file is text-based and encoded in UTF-8. You can drag and drop the file directly into the validation zone on the Dashboard.</p>
+             <p>We support standard BibTeX fields including:</p>
+             <ul className="list-disc pl-5 space-y-1">
+                 <li>author</li>
+                 <li>year</li>
+                 <li>title</li>
+                 <li>DOI</li>
+                 <li>journal</li>
+             </ul>
+          </div>
+        )
+      },
+      {
+        id: 'team-preferences',
+        title: "Changing your team's display preferences",
+        content: (
+            <div className="space-y-4 text-gray-600 leading-relaxed">
+                <p>Admins can manage team settings under <strong>Settings &gt; Organization</strong>.</p>
+                <p>Individual users can update their display name, avatar, and notification preferences under <strong>Settings &gt; Profile</strong>.</p>
+            </div>
+        )
+      },
+      {
         id: 'navigation',
         title: 'Navigating the dashboard',
         content: (
@@ -95,6 +121,20 @@ const categoriesData: Category[] = [
         id: 'history-reports',
         title: 'History & Reports',
         content: <p>How to search, filter, and export your past validation jobs.</p>
+      },
+      {
+        id: 'error-codes',
+        title: "Understanding validation error codes",
+        content: (
+            <div className="space-y-4 text-gray-600 leading-relaxed">
+                <h4 className="font-bold text-gray-900">Common Errors</h4>
+                <ul className="list-disc pl-5 space-y-2">
+                    <li><strong>Metadata Mismatch:</strong> The provided metadata (e.g., Year, Author) does not match external databases like CrossRef.</li>
+                    <li><strong>Not Found:</strong> The DOI or reference string could not be found in any connected database.</li>
+                    <li><strong>Formatting Error:</strong> The citation style does not adhere to the project's requirements.</li>
+                </ul>
+            </div>
+        )
       }
     ]
   },
@@ -114,6 +154,21 @@ const categoriesData: Category[] = [
                Authorization: Bearer pk_live_12345...
              </pre>
           </div>
+        )
+      },
+      {
+        id: 'cicd-keys',
+        title: "Generating an API key for CI/CD",
+        content: (
+            <div className="space-y-4 text-gray-600 leading-relaxed">
+                <p>To integrate validation into your build pipeline:</p>
+                <ol className="list-decimal pl-5 space-y-2">
+                    <li>Go to the <strong>API Keys</strong> section in the sidebar.</li>
+                    <li>Click <strong>Create New Key</strong>.</li>
+                    <li>Give it a descriptive name (e.g., "Jenkins Pipeline").</li>
+                    <li>Copy the generated secret immediately. For security, the key is only shown once.</li>
+                </ol>
+            </div>
         )
       },
       {
@@ -148,41 +203,24 @@ const categoriesData: Category[] = [
   },
 ];
 
-const popularArticles = [
-  {
-    title: "How to upload a BibTeX file correctly",
-    content: "Ensure your .bib file is text-based and encoded in UTF-8. You can drag and drop the file directly into the validation zone on the Dashboard. We support standard BibTeX fields including author, year, title, and DOI."
-  },
-  {
-    title: "Understanding validation error codes",
-    content: "Common errors include 'Metadata Mismatch' (provided metadata doesn't match external databases), 'Not Found' (DOI or reference string not found in CrossRef/PubMed), and 'Formatting Error' (citation style validation failed)."
-  },
-  {
-    title: "Generating an API key for CI/CD",
-    content: "Go to the API Keys section in the sidebar. Click 'Create New Key', give it a descriptive name (e.g., 'Jenkins Pipeline'), and copy the generated secret immediately. For security, the key is only shown once."
-  },
-  {
-    title: "Changing your team's display preferences",
-    content: "Admins can manage team settings under Settings > Organization. Individual users can update their display name, avatar, and notification preferences under Settings > Profile."
-  }
+// Refactored to reference the actual data structure
+const popularArticlesRefs = [
+  { categoryId: 'getting-started', articleId: 'upload-bibtex' },
+  { categoryId: 'platform-guide', articleId: 'error-codes' },
+  { categoryId: 'api-integration', articleId: 'cicd-keys' },
+  { categoryId: 'getting-started', articleId: 'team-preferences' }
 ];
 
 // --- Component ---
 
 export const HelpSupport: React.FC = () => {
-  // Contact Form State
-  const [contactForm, setContactForm] = useState({ subject: '', message: '', category: 'technical' });
-  const [isSending, setIsSending] = useState(false);
-  const [sent, setSent] = useState(false);
-
   // Navigation State
   const [view, setView] = useState<'home' | 'category'>('home');
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [activeArticle, setActiveArticle] = useState<string | null>(null);
 
-  // Search & Accordion State
+  // Search State
   const [searchQuery, setSearchQuery] = useState('');
-  const [expandedPopular, setExpandedPopular] = useState<string | null>(null);
 
   // Derived Data
   const currentCategoryData = categoriesData.find(c => c.id === activeCategory);
@@ -223,19 +261,6 @@ export const HelpSupport: React.FC = () => {
     return null;
   };
 
-  const handleContactSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!contactForm.subject || !contactForm.message) return;
-
-    setIsSending(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setIsSending(false);
-    setSent(true);
-    setContactForm({ subject: '', message: '', category: 'technical' });
-    setTimeout(() => setSent(false), 5000);
-  };
-
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     if (view === 'category') {
@@ -267,6 +292,7 @@ export const HelpSupport: React.FC = () => {
     setActiveArticle(articleId);
     setView('category');
     setSearchQuery('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // --- Views ---
@@ -372,7 +398,7 @@ export const HelpSupport: React.FC = () => {
                         </div>
                     </nav>
 
-                    {/* Popular Articles Accordion */}
+                    {/* Popular Articles - Now Navigational */}
                     <section aria-labelledby="popular-articles-title" className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                         <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
                             <h3 id="popular-articles-title" className="font-semibold text-gray-900 flex items-center">
@@ -381,35 +407,26 @@ export const HelpSupport: React.FC = () => {
                             </h3>
                         </div>
                         <div className="divide-y divide-gray-100">
-                            {popularArticles.map((article, idx) => {
-                                const isOpen = expandedPopular === article.title;
+                            {popularArticlesRefs.map((ref, idx) => {
+                                const cat = categoriesData.find(c => c.id === ref.categoryId);
+                                const art = cat?.articles.find(a => a.id === ref.articleId);
+                                
+                                if (!cat || !art) return null;
+
                                 return (
-                                    <article key={idx} className="group bg-white transition-colors">
-                                        <button 
-                                            onClick={() => setExpandedPopular(isOpen ? null : article.title)}
-                                            aria-expanded={isOpen}
-                                            className={`w-full px-6 py-4 flex items-center justify-between text-left transition-colors ${isOpen ? 'bg-brand-50/30' : 'hover:bg-gray-50'}`}
-                                        >
-                                            <div className="flex items-center">
-                                                <FileText className={`w-4 h-4 mr-3 transition-colors flex-shrink-0 ${isOpen ? 'text-brand-600' : 'text-gray-400 group-hover:text-brand-500'}`} />
-                                                <span className={`font-medium transition-colors ${isOpen ? 'text-brand-700' : 'text-gray-700 group-hover:text-gray-900'}`}>
-                                                    {article.title}
-                                                </span>
-                                            </div>
-                                            {isOpen ? (
-                                                <ChevronDown className="w-4 h-4 text-brand-500 flex-shrink-0" />
-                                            ) : (
-                                                <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-brand-400 flex-shrink-0" />
-                                            )}
-                                        </button>
-                                        <div 
-                                            className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
-                                        >
-                                            <div className="px-6 pb-5 pl-13 ml-10 text-sm text-gray-600 leading-relaxed border-l-2 border-brand-100">
-                                                {article.content}
-                                            </div>
+                                    <button 
+                                        key={idx} 
+                                        onClick={() => handleSearchResultClick(ref.categoryId, ref.articleId)}
+                                        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors group"
+                                    >
+                                        <div className="flex items-center">
+                                            <FileText className="w-4 h-4 mr-3 text-gray-400 group-hover:text-brand-500 transition-colors flex-shrink-0" />
+                                            <span className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors">
+                                                {art.title}
+                                            </span>
                                         </div>
-                                    </article>
+                                        <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-brand-400 group-hover:translate-x-1 transition-all flex-shrink-0" />
+                                    </button>
                                 );
                             })}
                         </div>
@@ -420,7 +437,13 @@ export const HelpSupport: React.FC = () => {
 
          {/* Contact Form Sidebar */}
          <aside className="lg:col-span-1 order-last lg:order-none" aria-labelledby="contact-support-title">
-            {renderContactForm()}
+            <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 sticky top-6">
+              <div className="mb-6">
+                  <h3 id="contact-support-title" className="text-lg font-bold text-gray-900 mb-1">Contact Support</h3>
+                  <p className="text-sm text-gray-500">Can't find what you need? Send us a message.</p>
+              </div>
+              <ContactForm />
+            </div>
          </aside>
       </div>
     </div>
@@ -437,7 +460,7 @@ export const HelpSupport: React.FC = () => {
         <nav aria-label="Breadcrumb" className="flex items-center text-sm text-gray-500 mb-6 flex-wrap gap-1">
           <button onClick={() => setView('home')} className="hover:text-brand-600 transition-colors flex items-center">
              <Home className="w-4 h-4 mr-1" />
-             Help Center
+             Home
           </button>
           <ChevronRight className="w-4 h-4 mx-2 text-gray-300" />
           <span className="font-medium text-gray-900 whitespace-nowrap">{currentCategoryData.title}</span>
@@ -538,81 +561,6 @@ export const HelpSupport: React.FC = () => {
       </div>
     );
   };
-
-  const renderContactForm = () => (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 sticky top-6">
-      <div className="mb-6">
-          <h3 id="contact-support-title" className="text-lg font-bold text-gray-900 mb-1">Contact Support</h3>
-          <p className="text-sm text-gray-500">Can't find what you need? Send us a message.</p>
-      </div>
-
-      {sent ? (
-          <div className="bg-green-50 border border-green-100 rounded-xl p-6 text-center animate-fade-in">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <CheckCircle className="w-6 h-6 text-green-600" />
-              </div>
-              <h4 className="font-bold text-gray-900 mb-1">Message Sent!</h4>
-              <p className="text-sm text-gray-600">We've received your ticket and will get back to you shortly via email.</p>
-              <button 
-                  onClick={() => setSent(false)}
-                  className="mt-4 text-sm font-medium text-brand-600 hover:text-brand-700 underline"
-              >
-                  Send another message
-              </button>
-          </div>
-      ) : (
-          <form onSubmit={handleContactSubmit} className="space-y-4">
-              <div>
-                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">Topic</label>
-                  <select 
-                      className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 outline-none transition-all"
-                      value={contactForm.category}
-                      onChange={(e) => setContactForm({...contactForm, category: e.target.value})}
-                  >
-                      <option value="technical">Technical Issue</option>
-                      <option value="billing">Billing Question</option>
-                      <option value="feature">Feature Request</option>
-                      <option value="other">Other</option>
-                  </select>
-              </div>
-
-              <Input 
-                  label="Subject"
-                  value={contactForm.subject}
-                  onChange={(e) => setContactForm({...contactForm, subject: e.target.value})}
-                  placeholder="Brief summary of issue"
-              />
-
-              <div className="group">
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5 ml-1">Message</label>
-                  <div className="relative w-full rounded-lg border border-gray-200 bg-gray-50/50 focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 focus-within:bg-white transition-all duration-200">
-                      <textarea
-                          rows={5}
-                          className="w-full bg-transparent border-none outline-none p-4 text-gray-900 text-sm resize-none placeholder-gray-400"
-                          placeholder="Describe your issue in detail..."
-                          value={contactForm.message}
-                          onChange={(e) => setContactForm({...contactForm, message: e.target.value})}
-                      />
-                  </div>
-              </div>
-
-              <Button 
-                  type="submit" 
-                  fullWidth 
-                  isLoading={isSending}
-                  disabled={!contactForm.subject || !contactForm.message}
-              >
-                  <Send className="w-4 h-4 mr-2" />
-                  Submit Ticket
-              </Button>
-              
-              <p className="text-xs text-center text-gray-400 mt-2">
-                  Typical response time: &lt; 24 hours
-              </p>
-          </form>
-      )}
-    </div>
-  );
 
   return (
     <section aria-labelledby="help-title" className="max-w-6xl mx-auto">

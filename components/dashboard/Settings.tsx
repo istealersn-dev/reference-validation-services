@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { User, CreditCard, AlertTriangle, Camera, Mail, MapPin, Globe, Shield, Trash2, Check, CreditCard as CardIcon, Briefcase, ChevronDown } from 'lucide-react';
+import { User, CreditCard, AlertTriangle, Camera, Mail, MapPin, Globe, Shield, Trash2, Check, CreditCard as CardIcon, Briefcase, ChevronDown, X, AlertCircle } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { OrcidIcon } from '@/components/icons/OrcidIcon';
@@ -18,6 +18,12 @@ export const Settings: React.FC<SettingsProps> = ({
   const [activeTab, setActiveTab] = useState<Tab>('profile');
   const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Modal States
+  const [showClearHistoryModal, setShowClearHistoryModal] = useState(false);
+  const [showDeleteAccountModal, setShowDeleteAccountModal] = useState(false);
+  const [deleteConfirmationEmail, setDeleteConfirmationEmail] = useState('');
+  const [deleteError, setDeleteError] = useState('');
 
   // Mock User Data
   const [profile, setProfile] = useState({
@@ -52,8 +58,44 @@ export const Settings: React.FC<SettingsProps> = ({
     }
   };
 
+  // --- Danger Zone Handlers ---
+
+  const handleClearHistoryClick = () => {
+    setShowClearHistoryModal(true);
+  };
+
+  const confirmClearHistory = async () => {
+    setIsLoading(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setIsLoading(false);
+    setShowClearHistoryModal(false);
+    // Ideally, trigger a toast notification here
+  };
+
+  const handleDeleteAccountClick = () => {
+    setDeleteConfirmationEmail('');
+    setDeleteError('');
+    setShowDeleteAccountModal(true);
+  };
+
+  const confirmDeleteAccount = async () => {
+    if (deleteConfirmationEmail !== profile.email) {
+        setDeleteError('The email address you entered does not match your account email.');
+        return;
+    }
+
+    setIsLoading(true);
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    setIsLoading(false);
+    setShowDeleteAccountModal(false);
+    // Force a reload to simulate account deletion/logout for this demo
+    window.location.reload(); 
+  };
+
   return (
-    <section aria-labelledby="settings-title" className="max-w-4xl mx-auto animate-fade-in">
+    <section aria-labelledby="settings-title" className="max-w-4xl mx-auto animate-fade-in relative">
       
       {/* Page Header */}
       <header className="mb-8">
@@ -366,7 +408,11 @@ export const Settings: React.FC<SettingsProps> = ({
                                 Permanently remove all your past validation reports and uploaded files.
                             </p>
                         </div>
-                        <Button variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 whitespace-nowrap w-full md:w-auto">
+                        <Button 
+                            variant="outline" 
+                            className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 whitespace-nowrap w-full md:w-auto"
+                            onClick={handleClearHistoryClick}
+                        >
                             Clear History
                         </Button>
                     </div>
@@ -378,7 +424,10 @@ export const Settings: React.FC<SettingsProps> = ({
                                 Permanently delete your account and all associated data. This action cannot be undone and your subscription will be cancelled immediately.
                             </p>
                         </div>
-                        <Button className="bg-red-600 hover:bg-red-700 text-white shadow-red-600/20 whitespace-nowrap w-full md:w-auto">
+                        <Button 
+                            className="bg-red-600 hover:bg-red-700 text-white shadow-red-600/20 whitespace-nowrap w-full md:w-auto"
+                            onClick={handleDeleteAccountClick}
+                        >
                             <Trash2 className="w-4 h-4 mr-2" />
                             Delete Account
                         </Button>
@@ -391,6 +440,94 @@ export const Settings: React.FC<SettingsProps> = ({
                 </p>
             </div>
         </section>
+      )}
+
+      {/* Confirmation Modal: Clear History */}
+      {showClearHistoryModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+                <div className="p-6 md:p-8">
+                    <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-4 mx-auto md:mx-0">
+                        <AlertTriangle className="w-6 h-6 text-red-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 text-center md:text-left">Clear Validation History?</h3>
+                    <p className="text-gray-500 mt-2 text-center md:text-left">
+                        Are you sure you want to delete all validation reports? This action cannot be undone.
+                    </p>
+                    <div className="mt-8 flex justify-end gap-3">
+                        <Button variant="outline" onClick={() => setShowClearHistoryModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button 
+                            className="bg-red-600 hover:bg-red-700 text-white border-transparent"
+                            isLoading={isLoading}
+                            onClick={confirmClearHistory}
+                        >
+                            Yes, Clear History
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal: Delete Account */}
+      {showDeleteAccountModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up">
+                <div className="p-6 md:p-8">
+                    <div className="flex items-start justify-between mb-2">
+                        <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center">
+                            <AlertTriangle className="w-6 h-6 text-red-600" />
+                        </div>
+                        <button 
+                            onClick={() => setShowDeleteAccountModal(false)}
+                            className="text-gray-400 hover:text-gray-600"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                    </div>
+                    
+                    <h3 className="text-xl font-bold text-gray-900 mt-4">Delete Account?</h3>
+                    <p className="text-gray-500 mt-2">
+                        This action is permanent. All your data, subscription, and team access will be wiped immediately.
+                    </p>
+
+                    <div className="mt-6">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            To confirm, please type <span className="font-bold select-all">{profile.email}</span>
+                        </label>
+                        <Input 
+                            label=""
+                            id="confirmEmail"
+                            value={deleteConfirmationEmail}
+                            onChange={(e) => {
+                                setDeleteConfirmationEmail(e.target.value);
+                                if(deleteError) setDeleteError('');
+                            }}
+                            error={deleteError}
+                            placeholder={profile.email}
+                            className="mb-0"
+                            autoFocus
+                        />
+                    </div>
+
+                    <div className="mt-8 flex justify-end gap-3">
+                        <Button variant="outline" onClick={() => setShowDeleteAccountModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button 
+                            className="bg-red-600 hover:bg-red-700 text-white border-transparent"
+                            isLoading={isLoading}
+                            onClick={confirmDeleteAccount}
+                            disabled={!deleteConfirmationEmail}
+                        >
+                            Delete Account
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        </div>
       )}
 
     </section>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Key, Plus, Copy, Trash2, Shield, Calendar, Clock, Check } from 'lucide-react';
+import { Key, Plus, Copy, Trash2, Shield, Calendar, Clock, Check, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 
@@ -23,6 +23,10 @@ export const ApiKeys: React.FC = () => {
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Revocation Modal State
+  const [showRevokeModal, setShowRevokeModal] = useState(false);
+  const [keyToRevoke, setKeyToRevoke] = useState<string | null>(null);
 
   const MAX_KEYS = 5;
 
@@ -64,8 +68,15 @@ export const ApiKeys: React.FC = () => {
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm('Are you sure you want to revoke this API key? This action cannot be undone and any applications using this key will stop working.')) {
-        setKeys(keys.filter(k => k.id !== id));
+    setKeyToRevoke(id);
+    setShowRevokeModal(true);
+  };
+
+  const confirmRevoke = () => {
+    if (keyToRevoke) {
+        setKeys(keys.filter(k => k.id !== keyToRevoke));
+        setShowRevokeModal(false);
+        setKeyToRevoke(null);
     }
   };
 
@@ -225,6 +236,34 @@ export const ApiKeys: React.FC = () => {
                             </div>
                         </form>
                     )}
+                </div>
+            </div>
+        </div>
+      )}
+
+      {/* Revoke Confirmation Modal */}
+      {showRevokeModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+                <div className="p-6 md:p-8">
+                    <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-4 mx-auto md:mx-0">
+                        <AlertTriangle className="w-6 h-6 text-red-600" />
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 text-center md:text-left">Revoke API Key?</h3>
+                    <p className="text-gray-500 mt-2 text-center md:text-left leading-relaxed">
+                        Are you sure you want to revoke this API key? This action cannot be undone and any applications using this key will stop working immediately.
+                    </p>
+                    <div className="mt-8 flex justify-end gap-3">
+                        <Button variant="outline" onClick={() => setShowRevokeModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button 
+                            className="bg-red-600 hover:bg-red-700 text-white border-transparent"
+                            onClick={confirmRevoke}
+                        >
+                            Yes, Revoke Key
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

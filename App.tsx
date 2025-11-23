@@ -4,10 +4,13 @@ import { RegistrationForm } from '@/components/RegistrationForm';
 import { PasswordResetForm } from '@/components/PasswordResetForm';
 import { BrandSidebar } from '@/components/BrandSidebar';
 import { Dashboard } from '@/components/dashboard/Dashboard';
+import { ContactForm } from '@/components/ContactForm';
+import { X } from 'lucide-react';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentView, setCurrentView] = useState<'login' | 'register' | 'forgot-password'>('login');
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
 
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
@@ -58,7 +61,7 @@ const App: React.FC = () => {
           
           <div className="mt-12 text-center border-t border-gray-100 pt-6">
             <p className="text-sm text-gray-400">
-              Need help? <a href="#" className="font-medium text-brand-600 hover:text-brand-500 transition-colors">Contact Support</a>
+              Need help? <a href="#" onClick={(e) => { e.preventDefault(); setIsSupportModalOpen(true); }} className="font-medium text-brand-600 hover:text-brand-500 transition-colors">Contact Support</a>
             </p>
           </div>
         </div>
@@ -68,6 +71,30 @@ const App: React.FC = () => {
           &copy; {new Date().getFullYear()} Scholarly Publishing Tech. All rights reserved.
         </footer>
       </main>
+
+      {/* Support Modal */}
+      {isSupportModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-fade-in-up relative">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-start bg-gray-50/50">
+              <div>
+                 <h3 className="text-xl font-bold text-gray-900">Contact Support</h3>
+                 <p className="text-sm text-gray-500 mt-1">Can't find what you need? Send us a message.</p>
+              </div>
+              <button 
+                onClick={() => setIsSupportModalOpen(false)} 
+                className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+                aria-label="Close modal"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            <div className="p-6">
+              <ContactForm />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
