@@ -1,6 +1,6 @@
 import React from 'react';
 import { FileText, Download, CheckCircle, AlertCircle, Search, Filter, Calendar, Clock } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Button } from '@/components/ui/Button';
 
 export const History: React.FC = () => {
   // Mock Data
@@ -22,12 +22,14 @@ export const History: React.FC = () => {
             <p className="text-gray-500 mt-1">View and download past reference validation reports.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
-             <div className="relative group w-full sm:w-64">
-                <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
+             <div className="flex items-center w-full sm:w-64 rounded-lg border border-gray-200 bg-white overflow-hidden focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/20 transition-all">
+                <div className="pl-3 text-gray-400">
+                   <Search className="w-4 h-4" />
+                </div>
                 <input 
                     type="text" 
                     placeholder="Search files..." 
-                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all"
+                    className="w-full pl-2 pr-4 py-2.5 text-sm border-none focus:ring-0 outline-none placeholder-gray-400 text-gray-900"
                 />
              </div>
              <Button variant="outline" className="bg-white hover:bg-gray-50 text-gray-600 border-gray-200 w-full sm:w-auto">

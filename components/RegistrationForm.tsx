@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Mail, Lock, User, Building, ArrowRight, Check, AlertCircle, Eye, EyeOff } from 'lucide-react';
-import { Input } from './ui/Input';
-import { Button } from './ui/Button';
-import { OrcidIcon } from './icons/OrcidIcon';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import { OrcidIcon } from '@/components/icons/OrcidIcon';
 
 interface RegistrationFormProps {
   onLoginClick: () => void;
@@ -190,7 +190,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           id="name"
           label="Full Name"
@@ -198,6 +198,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
           value={formData.name}
           onChange={(e) => handleInputChange('name', e.target.value)}
           error={errors.name}
+          placeholder="e.g. John Smith"
         />
 
         <Input
@@ -208,9 +209,10 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
           value={formData.email}
           onChange={(e) => handleInputChange('email', e.target.value)}
           error={errors.email}
+          placeholder="name@company.com"
         />
 
-        <div className="relative">
+        <div>
           <Input
             id="password"
             type={showPassword ? 'text' : 'password'}
@@ -219,58 +221,62 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
             value={formData.password}
             onChange={(e) => handleInputChange('password', e.target.value)}
             error={errors.password}
-            className={formData.password ? "mb-2" : "mb-5"}
+            className="mb-2"
+            placeholder="Create a password"
+            rightElement={
+              <button
+                type="button"
+                className="text-gray-400 hover:text-brand-600 transition-colors focus:outline-none p-1"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            }
           />
-          <button
-            type="button"
-            className="absolute right-4 top-4 text-gray-400 hover:text-brand-600 transition-colors focus:outline-none"
-            onClick={() => setShowPassword(!showPassword)}
-            tabIndex={-1}
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
+          
+          {/* Password Strength Indicator */}
+          {formData.password && (
+            <div className="mb-4 px-1 animate-fade-in">
+              <div className="flex gap-1.5 h-1.5 mb-1.5">
+                {[1, 2, 3, 4].map((level) => (
+                  <div 
+                    key={level}
+                    className={`h-full flex-1 rounded-full transition-colors duration-500 ${
+                      passwordStrength >= level ? strengthConfig.color : 'bg-gray-100'
+                    }`} 
+                  />
+                ))}
+              </div>
+              <div className="flex justify-end">
+                <span className={`text-xs font-medium transition-colors duration-300 ${strengthConfig.text}`}>
+                  {strengthConfig.label}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Password Strength Indicator */}
-        {formData.password && (
-          <div className="mb-5 px-1 animate-fade-in">
-            <div className="flex gap-1.5 h-1.5 mb-1.5">
-              {[1, 2, 3, 4].map((level) => (
-                <div 
-                  key={level}
-                  className={`h-full flex-1 rounded-full transition-colors duration-500 ${
-                    passwordStrength >= level ? strengthConfig.color : 'bg-gray-100'
-                  }`} 
-                />
-              ))}
-            </div>
-            <div className="flex justify-end">
-              <span className={`text-xs font-medium transition-colors duration-300 ${strengthConfig.text}`}>
-                {strengthConfig.label}
-              </span>
-            </div>
-          </div>
-        )}
-
-        <div className="relative">
-          <Input
-            id="confirmPassword"
-            type={showConfirmPassword ? 'text' : 'password'}
-            label="Confirm Password"
-            icon={Lock}
-            value={formData.confirmPassword}
-            onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-            error={errors.confirmPassword}
-          />
-          <button
-            type="button"
-            className="absolute right-4 top-4 text-gray-400 hover:text-brand-600 transition-colors focus:outline-none"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            tabIndex={-1}
-          >
-            {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
-        </div>
+        <Input
+          id="confirmPassword"
+          type={showConfirmPassword ? 'text' : 'password'}
+          label="Confirm Password"
+          icon={Lock}
+          value={formData.confirmPassword}
+          onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+          error={errors.confirmPassword}
+          placeholder="Confirm your password"
+          rightElement={
+            <button
+              type="button"
+              className="text-gray-400 hover:text-brand-600 transition-colors focus:outline-none p-1"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              tabIndex={-1}
+            >
+              {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          }
+        />
 
         <Input
           id="company"
@@ -279,6 +285,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
           value={formData.company}
           onChange={(e) => handleInputChange('company', e.target.value)}
           error={errors.company}
+          placeholder="e.g. Acme Publishing"
         />
 
         {/* Consent Checkboxes */}

@@ -9,6 +9,7 @@ interface HeaderProps {
   onLogout?: () => void;
   onNavigate?: (view: DashboardView) => void;
   onMenuClick?: () => void;
+  userAvatar?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({ 
@@ -16,7 +17,8 @@ export const Header: React.FC<HeaderProps> = ({
   subtitle = "New Job",
   onLogout,
   onNavigate,
-  onMenuClick
+  onMenuClick,
+  userAvatar = "https://picsum.photos/seed/user123/200/200"
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -71,7 +73,7 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-500 to-brand-700 p-0.5">
               <img 
-                  src="https://picsum.photos/seed/user123/200/200" 
+                  src={userAvatar} 
                   alt="User" 
                   className="w-full h-full rounded-full object-cover border-2 border-white"
               />
@@ -116,6 +118,7 @@ export const Header: React.FC<HeaderProps> = ({
               
               <button 
                 onClick={() => {
+                  // Calls handleLogoutRequest from Dashboard, which triggers the modal
                   if (onLogout) onLogout();
                   setIsDropdownOpen(false);
                 }}

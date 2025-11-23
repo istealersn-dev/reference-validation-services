@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Key, ArrowRight, ArrowLeft, Eye, EyeOff, CheckCircle } from 'lucide-react';
-import { Input } from './ui/Input';
-import { Button } from './ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 
 interface PasswordResetFormProps {
   onBackToLogin: () => void;
@@ -230,7 +230,7 @@ export const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToLo
             error={errors.code}
             placeholder="000000"
             maxLength={6}
-            className="tracking-widest font-mono text-lg"
+            className="font-mono text-lg"
             autoFocus
           />
 
@@ -253,8 +253,8 @@ export const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToLo
 
       {/* Step 3: Set New Password */}
       {step === 'reset' && (
-        <form onSubmit={handleResetPassword} className="space-y-5">
-          <div className="relative">
+        <form onSubmit={handleResetPassword} className="space-y-4">
+          <div>
             <Input
               id="newPassword"
               type={showPassword ? 'text' : 'password'}
@@ -266,62 +266,64 @@ export const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToLo
                 if (errors.password) setErrors(prev => ({ ...prev, password: undefined }));
               }}
               error={errors.password}
-              className={password ? "mb-2" : "mb-5"}
+              className="mb-2"
               autoFocus
+              rightElement={
+                <button
+                  type="button"
+                  className="text-gray-400 hover:text-brand-600 transition-colors focus:outline-none p-1"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              }
             />
-            <button
-              type="button"
-              className="absolute right-4 top-4 text-gray-400 hover:text-brand-600 transition-colors focus:outline-none"
-              onClick={() => setShowPassword(!showPassword)}
-              tabIndex={-1}
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
+
+            {/* Strength Indicator */}
+            {password && (
+              <div className="mb-4 px-1 animate-fade-in">
+                <div className="flex gap-1.5 h-1.5 mb-1.5">
+                  {[1, 2, 3, 4].map((level) => (
+                    <div 
+                      key={level}
+                      className={`h-full flex-1 rounded-full transition-colors duration-500 ${
+                        passwordStrength >= level ? strengthConfig.color : 'bg-gray-100'
+                      }`} 
+                    />
+                  ))}
+                </div>
+                <div className="flex justify-end">
+                  <span className={`text-xs font-medium transition-colors duration-300 ${strengthConfig.text}`}>
+                    {strengthConfig.label}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Strength Indicator */}
-          {password && (
-            <div className="mb-5 px-1 animate-fade-in">
-              <div className="flex gap-1.5 h-1.5 mb-1.5">
-                {[1, 2, 3, 4].map((level) => (
-                  <div 
-                    key={level}
-                    className={`h-full flex-1 rounded-full transition-colors duration-500 ${
-                      passwordStrength >= level ? strengthConfig.color : 'bg-gray-100'
-                    }`} 
-                  />
-                ))}
-              </div>
-              <div className="flex justify-end">
-                <span className={`text-xs font-medium transition-colors duration-300 ${strengthConfig.text}`}>
-                  {strengthConfig.label}
-                </span>
-              </div>
-            </div>
-          )}
-
-          <div className="relative">
-            <Input
-              id="confirmPassword"
-              type={showConfirmPassword ? 'text' : 'password'}
-              label="Confirm New Password"
-              icon={Lock}
-              value={confirmPassword}
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-                if (errors.confirmPassword) setErrors(prev => ({ ...prev, confirmPassword: undefined }));
-              }}
-              error={errors.confirmPassword}
-            />
-            <button
-              type="button"
-              className="absolute right-4 top-4 text-gray-400 hover:text-brand-600 transition-colors focus:outline-none"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              tabIndex={-1}
-            >
-              {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </div>
+          <Input
+            id="confirmPassword"
+            type={showConfirmPassword ? 'text' : 'password'}
+            label="Confirm New Password"
+            icon={Lock}
+            value={confirmPassword}
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              if (errors.confirmPassword) setErrors(prev => ({ ...prev, confirmPassword: undefined }));
+            }}
+            error={errors.confirmPassword}
+            rightElement={
+              <button
+                type="button"
+                className="text-gray-400 hover:text-brand-600 transition-colors focus:outline-none p-1"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                tabIndex={-1}
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            }
+          />
 
           <Button type="submit" fullWidth isLoading={isLoading} className="h-12 text-base shadow-brand-600/25 hover:shadow-brand-600/40 mt-2">
             <span className="mr-2">Reset Password</span>

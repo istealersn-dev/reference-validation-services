@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { UploadCloud, FileText, CheckCircle, XCircle, Download, AlertCircle, Loader2, RefreshCw } from 'lucide-react';
-import { Button } from '../ui/Button';
+import { Button } from '@/components/ui/Button';
 
 type ValidationStatus = 'idle' | 'uploading' | 'processing' | 'complete';
 

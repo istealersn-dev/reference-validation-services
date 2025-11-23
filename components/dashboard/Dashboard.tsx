@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Sidebar } from './Sidebar';
-import { Header } from './Header';
-import { ReferenceValidator } from './ReferenceValidator';
-import { History } from './History';
-import { Settings } from './Settings';
-import { ApiKeys } from './ApiKeys';
-import { HelpSupport } from './HelpSupport';
+import { Sidebar } from '@/components/dashboard/Sidebar';
+import { Header } from '@/components/dashboard/Header';
+import { ReferenceValidator } from '@/components/dashboard/ReferenceValidator';
+import { History } from '@/components/dashboard/History';
+import { Settings } from '@/components/dashboard/Settings';
+import { ApiKeys } from '@/components/dashboard/ApiKeys';
+import { HelpSupport } from '@/components/dashboard/HelpSupport';
+import { LogOut } from 'lucide-react';
 
 interface DashboardProps {
   onLogout: () => void;
@@ -16,6 +17,10 @@ type DashboardView = 'dashboard' | 'history' | 'settings' | 'api-keys' | 'help-s
 export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const [currentView, setCurrentView] = useState<DashboardView>('dashboard');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  // State lifted from Settings and Sidebar
+  const [userAvatar, setUserAvatar] = useState('https://picsum.photos/seed/user123/200/200');
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const getHeaderProps = () => {
     switch (currentView) {
@@ -38,6 +43,15 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
     setIsMobileMenuOpen(false); // Close sidebar on mobile when navigating
   };
 
+  const handleLogoutRequest = () => {
+    setShowLogoutConfirm(true);
+  };
+
+  const handleConfirmLogout = () => {
+    setShowLogoutConfirm(false);
+    onLogout();
+  };
+
   return (
     <div className="h-screen w-full flex bg-gray-50 overflow-hidden font-sans">
       {/* Mobile Sidebar Overlay */}
@@ -51,7 +65,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
 
       {/* Sidebar Navigation */}
       <Sidebar 
-        onLogout={onLogout} 
+        onLogout={handleLogoutRequest} 
         currentView={currentView}
         onNavigate={handleNavigate}
         isOpen={isMobileMenuOpen}
@@ -62,9 +76,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
       <div className="flex-1 flex flex-col overflow-hidden relative w-full">
         <Header 
           {...getHeaderProps()} 
-          onLogout={onLogout}
+          onLogout={handleLogoutRequest}
           onNavigate={handleNavigate}
           onMenuClick={() => setIsMobileMenuOpen(true)}
+          userAvatar={userAvatar}
         />
         
         {/* Scrollable Content */}
@@ -72,7 +87,12 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
           <div className="mx-auto max-w-7xl">
             {currentView === 'dashboard' && <ReferenceValidator />}
             {currentView === 'history' && <History />}
-            {currentView === 'settings' && <Settings />}
+            {currentView === 'settings' && (
+              <Settings 
+                currentAvatar={userAvatar} 
+                onAvatarUpdate={setUserAvatar} 
+              />
+            )}
             {currentView === 'api-keys' && <ApiKeys />}
             {currentView === 'help-support' && <HelpSupport />}
           </div>
@@ -83,6 +103,42 @@ export const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
           </footer>
         </main>
       </div>
+
+      {/* Logout Confirmation Modal - Lifted from Sidebar to unify behavior */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-900/60 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="logout-title">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all animate-fade-in-up border border-gray-100">
+                <div className="p-6 md:p-8">
+                    <div className="flex items-start gap-4">
+                         <div className="flex-shrink-0 w-12 h-12 bg-red-50 rounded-full flex items-center justify-center ring-4 ring-red-50">
+                            <LogOut className="w-6 h-6 text-red-600 ml-0.5" />
+                         </div>
+                         <div className="flex-1">
+                             <h3 id="logout-title" className="text-xl font-bold text-gray-900">Sign out?</h3>
+                             <p className="text-gray-500 mt-2 leading-relaxed">
+                                 Are you sure you want to sign out of your account? You will need to sign in again to access your dashboard.
+                             </p>
+                         </div>
+                    </div>
+
+                    <div className="mt-8 flex justify-end gap-3">
+                        <button
+                            onClick={() => setShowLogoutConfirm(false)}
+                            className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            onClick={handleConfirmLogout}
+                            className="px-5 py-2.5 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                        >
+                            Sign Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+      )}
     </div>
   );
 };

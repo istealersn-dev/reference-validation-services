@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Book, MessageCircle, FileText, ChevronRight, ChevronDown, Send, Zap, CreditCard, Layout, CheckCircle, ChevronLeft, Home, ArrowRight, X } from 'lucide-react';
-import { Input } from '../ui/Input';
-import { Button } from '../ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 
 // --- Types & Data ---
 
@@ -320,13 +320,15 @@ export const HelpSupport: React.FC = () => {
         <div className="relative z-10 max-w-2xl mx-auto">
             <h2 id="help-title" className="text-2xl md:text-3xl font-bold text-white mb-4">How can we help you today?</h2>
             <div className="relative group">
-                <Search className="absolute left-4 top-3.5 text-gray-400 w-5 h-5 transition-colors group-focus-within:text-brand-600" />
+                <div className="absolute left-4 top-3.5 text-gray-400 group-focus-within:text-brand-600 pointer-events-none">
+                    <Search className="w-5 h-5 transition-colors" />
+                </div>
                 <input 
                     type="text" 
                     value={searchQuery}
                     onChange={handleSearch}
                     placeholder="Search for articles, guides, or troubleshooting..." 
-                    className="w-full pl-12 pr-10 py-3.5 rounded-xl border-none bg-white text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-brand-500/30 shadow-xl transition-all"
+                    className="w-full pl-12 pr-10 py-3.5 rounded-xl border-none bg-white text-gray-900 placeholder-gray-400 focus:ring-4 focus:ring-brand-500/30 shadow-xl transition-all outline-none"
                 />
                 {searchQuery && (
                     <button 
@@ -582,7 +584,8 @@ export const HelpSupport: React.FC = () => {
               />
 
               <div className="group">
-                    <div className="relative w-full rounded-lg border border-gray-200 bg-gray-50/50 focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 focus-within:bg-white transition-all duration-300">
+                  <label className="block text-sm font-medium text-gray-700 mb-1.5 ml-1">Message</label>
+                  <div className="relative w-full rounded-lg border border-gray-200 bg-gray-50/50 focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 focus-within:bg-white transition-all duration-200">
                       <textarea
                           rows={5}
                           className="w-full bg-transparent border-none outline-none p-4 text-gray-900 text-sm resize-none placeholder-gray-400"

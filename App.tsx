@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { LoginForm } from './components/LoginForm';
-import { RegistrationForm } from './components/RegistrationForm';
-import { PasswordResetForm } from './components/PasswordResetForm';
-import { BrandSidebar } from './components/BrandSidebar';
-import { Dashboard } from './components/dashboard/Dashboard';
+import { LoginForm } from '@/components/LoginForm';
+import { RegistrationForm } from '@/components/RegistrationForm';
+import { PasswordResetForm } from '@/components/PasswordResetForm';
+import { BrandSidebar } from '@/components/BrandSidebar';
+import { Dashboard } from '@/components/dashboard/Dashboard';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -30,8 +30,10 @@ const App: React.FC = () => {
       </aside>
 
       {/* Right Side - Form Container */}
-      <main className="w-full lg:w-1/2 xl:w-7/12 flex flex-col items-center justify-center p-6 sm:p-12 lg:p-24 relative z-10">
-        <div className="w-full max-w-md animate-fade-in-up" key={currentView}>
+      <main className="w-full lg:w-1/2 xl:w-7/12 flex flex-col items-center p-6 sm:p-12 lg:p-24 relative z-10 min-h-screen">
+        
+        {/* Centered Content */}
+        <div className="w-full max-w-md animate-fade-in-up my-auto" key={currentView}>
           {/* Mobile Logo / Brand Header */}
           <header className="lg:hidden mb-10 text-center">
             <div className="h-12 w-12 bg-brand-600 rounded-xl mx-auto mb-4 shadow-lg shadow-brand-600/30 flex items-center justify-center text-white">
@@ -61,8 +63,8 @@ const App: React.FC = () => {
           </div>
         </div>
 
-        {/* Footer decoration */}
-        <footer className="absolute bottom-6 text-center w-full text-xs text-gray-300 lg:text-gray-400">
+        {/* Footer decoration - Pushed to bottom via flex */}
+        <footer className="mt-auto pt-6 text-center w-full text-xs text-gray-300 lg:text-gray-400">
           &copy; {new Date().getFullYear()} Scholarly Publishing Tech. All rights reserved.
         </footer>
       </main>

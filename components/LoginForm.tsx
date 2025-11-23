@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, AlertCircle } from 'lucide-react';
-import { Input } from './ui/Input';
-import { Button } from './ui/Button';
-import { OrcidIcon } from './icons/OrcidIcon';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import { OrcidIcon } from '@/components/icons/OrcidIcon';
 
 interface LoginFormProps {
   onRegisterClick: () => void;
@@ -141,40 +141,40 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-1">
-            <Input
-              id="email"
-              type="email"
-              label="Email Address"
-              icon={Mail}
-              value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              error={errors.email}
-              autoComplete="username"
-            />
-            
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                label="Password"
-                icon={Lock}
-                value={formData.password}
-                onChange={(e) => handleInputChange('password', e.target.value)}
-                error={errors.password}
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                className="absolute right-4 top-4 text-gray-400 hover:text-brand-600 transition-colors focus:outline-none"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex={-1} // Skip tab order for visibility toggle
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
-        </div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Input
+          id="email"
+          type="email"
+          label="Email Address"
+          icon={Mail}
+          value={formData.email}
+          onChange={(e) => handleInputChange('email', e.target.value)}
+          error={errors.email}
+          autoComplete="username"
+          placeholder="name@company.com"
+        />
+        
+        <Input
+          id="password"
+          type={showPassword ? 'text' : 'password'}
+          label="Password"
+          icon={Lock}
+          value={formData.password}
+          onChange={(e) => handleInputChange('password', e.target.value)}
+          error={errors.password}
+          autoComplete="current-password"
+          placeholder="Enter your password"
+          rightElement={
+            <button
+              type="button"
+              className="text-gray-400 hover:text-brand-600 transition-colors focus:outline-none p-1"
+              onClick={() => setShowPassword(!showPassword)}
+              tabIndex={-1}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          }
+        />
 
         <div className="flex items-center justify-between pt-1">
           <label className="flex items-center space-x-2 cursor-pointer group">
@@ -201,7 +201,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
           </button>
         </div>
 
-        <Button type="submit" fullWidth isLoading={isLoading} className="h-12 text-base shadow-brand-600/25 hover:shadow-brand-600/40">
+        <Button type="submit" fullWidth isLoading={isLoading} className="h-12 text-base shadow-brand-600/25 hover:shadow-brand-600/40 mt-2">
           <span className="mr-2">Sign In</span>
           {!isLoading && <ArrowRight size={18} />}
         </Button>

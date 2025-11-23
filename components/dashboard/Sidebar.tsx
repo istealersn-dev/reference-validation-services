@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Home, History, Key, LogOut, Settings, HelpCircle, X } from 'lucide-react';
 
 interface SidebarProps {
@@ -16,8 +16,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isOpen = false,
   onClose = () => {}
 }) => {
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-  
   const linkBaseClass = "flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors w-full text-left";
   const activeClass = "bg-brand-800 text-white shadow-sm";
   const inactiveClass = "text-brand-100 hover:bg-brand-800/50 hover:text-white";
@@ -100,7 +98,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
           
           <button 
-            onClick={() => setShowLogoutConfirm(true)}
+            onClick={onLogout}
             className="w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-red-200 hover:bg-red-900/20 hover:text-red-100 transition-colors"
           >
             <LogOut className="w-4 h-4 mr-3" />
@@ -108,45 +106,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
       </aside>
-
-      {/* Logout Confirmation Modal */}
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-900/60 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="logout-title">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all animate-fade-in-up border border-gray-100">
-                <div className="p-6 md:p-8">
-                    <div className="flex items-start gap-4">
-                         <div className="flex-shrink-0 w-12 h-12 bg-red-50 rounded-full flex items-center justify-center ring-4 ring-red-50">
-                            <LogOut className="w-6 h-6 text-red-600 ml-0.5" />
-                         </div>
-                         <div className="flex-1">
-                             <h3 id="logout-title" className="text-xl font-bold text-gray-900">Sign out?</h3>
-                             <p className="text-gray-500 mt-2 leading-relaxed">
-                                 Are you sure you want to sign out of your account? You will need to sign in again to access your dashboard.
-                             </p>
-                         </div>
-                    </div>
-
-                    <div className="mt-8 flex justify-end gap-3">
-                        <button
-                            onClick={() => setShowLogoutConfirm(false)}
-                            className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500/20"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            onClick={() => {
-                                setShowLogoutConfirm(false);
-                                onLogout();
-                            }}
-                            className="px-5 py-2.5 text-sm font-medium text-white bg-red-600 border border-transparent rounded-lg hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-red-500/20"
-                        >
-                            Sign Out
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-      )}
     </>
   );
 };

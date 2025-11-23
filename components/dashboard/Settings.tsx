@@ -1,14 +1,23 @@
-import React, { useState } from 'react';
-import { User, CreditCard, AlertTriangle, Camera, Mail, MapPin, Globe, Shield, Trash2, Check, CreditCard as CardIcon, Briefcase } from 'lucide-react';
-import { Input } from '../ui/Input';
-import { Button } from '../ui/Button';
-import { OrcidIcon } from '../icons/OrcidIcon';
+import React, { useState, useRef } from 'react';
+import { User, CreditCard, AlertTriangle, Camera, Mail, MapPin, Globe, Shield, Trash2, Check, CreditCard as CardIcon, Briefcase, ChevronDown } from 'lucide-react';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
+import { OrcidIcon } from '@/components/icons/OrcidIcon';
 
 type Tab = 'profile' | 'billing' | 'misc';
 
-export const Settings: React.FC = () => {
+interface SettingsProps {
+  currentAvatar?: string;
+  onAvatarUpdate?: (url: string) => void;
+}
+
+export const Settings: React.FC<SettingsProps> = ({ 
+  currentAvatar = "https://picsum.photos/seed/user123/200/200", 
+  onAvatarUpdate 
+}) => {
   const [activeTab, setActiveTab] = useState<Tab>('profile');
   const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Mock User Data
   const [profile, setProfile] = useState({
@@ -28,6 +37,19 @@ export const Settings: React.FC = () => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     setIsLoading(false);
+  };
+
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && onAvatarUpdate) {
+      // Create a local URL for the selected file to display immediately
+      const imageUrl = URL.createObjectURL(file);
+      onAvatarUpdate(imageUrl);
+    }
   };
 
   return (
@@ -99,11 +121,25 @@ export const Settings: React.FC = () => {
             <div className="flex flex-col md:flex-row gap-8">
               {/* Avatar Section */}
               <div className="flex flex-col items-center space-y-4">
-                <div className="relative group cursor-pointer">
+                <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleFileChange} 
+                    className="hidden" 
+                    accept="image/*"
+                    aria-label="Upload Avatar"
+                />
+                <div 
+                    className="relative group cursor-pointer" 
+                    onClick={handleAvatarClick}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if(e.key === 'Enter' || e.key === ' ') handleAvatarClick() }}
+                >
                   <div className="w-32 h-32 rounded-full p-1 border-2 border-dashed border-gray-300 group-hover:border-brand-400 transition-colors">
                     <div className="w-full h-full rounded-full overflow-hidden relative">
                         <img 
-                            src="https://picsum.photos/seed/user123/300/300" 
+                            src={currentAvatar}
                             alt="Avatar" 
                             className="w-full h-full object-cover transition-opacity group-hover:opacity-75"
                         />
@@ -116,7 +152,11 @@ export const Settings: React.FC = () => {
                      <Camera className="w-4 h-4" />
                   </div>
                 </div>
-                <button className="text-sm font-medium text-brand-600 hover:text-brand-700 hover:underline">
+                <button 
+                    type="button"
+                    onClick={handleAvatarClick}
+                    className="text-sm font-medium text-brand-600 hover:text-brand-700 hover:underline focus:outline-none focus:ring-2 focus:ring-brand-500/20 rounded px-2 py-1"
+                >
                     Change Avatar
                 </button>
               </div>
@@ -165,31 +205,27 @@ export const Settings: React.FC = () => {
                         value={profile.email}
                         onChange={(e) => setProfile({...profile, email: e.target.value})}
                     />
-                    <div className="relative">
-                         {/* Simple Country Select Mockup using standard select styled like Input */}
-                         <div className="mb-5 group">
-                            <div className="relative flex items-center w-full rounded-lg border border-gray-200 bg-gray-50/50 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 focus-within:bg-white transition-all duration-300 h-14">
-                                <div className="pl-4 text-gray-400">
+                    <div className="relative mb-5">
+                         <label className="block text-sm font-medium text-gray-700 mb-1.5 ml-1">Country</label>
+                         <div className="relative flex items-center w-full rounded-lg border border-gray-200 bg-gray-50/50 hover:border-gray-300 overflow-hidden focus-within:border-brand-500 focus-within:ring-4 focus-within:ring-brand-500/10 focus-within:bg-white transition-all duration-200">
+                                <div className="pl-3 text-gray-400">
                                     <Globe size={20} />
                                 </div>
-                                <div className="flex-1 relative h-full">
-                                    <select 
-                                        className="w-full h-full bg-transparent border-none outline-none px-4 pt-4 pb-1 text-gray-900 text-base font-medium appearance-none cursor-pointer"
-                                        value={profile.country}
-                                        onChange={(e) => setProfile({...profile, country: e.target.value})}
-                                    >
-                                        <option>United States</option>
-                                        <option>United Kingdom</option>
-                                        <option>Canada</option>
-                                        <option>Germany</option>
-                                        <option>Australia</option>
-                                    </select>
-                                    <label className="absolute left-4 top-2 text-[10px] text-brand-600 font-bold uppercase tracking-wider pointer-events-none">
-                                        Country
-                                    </label>
+                                <select 
+                                    className="w-full h-full bg-transparent border-none outline-none py-3 pl-3 pr-8 text-gray-900 text-base appearance-none cursor-pointer"
+                                    value={profile.country}
+                                    onChange={(e) => setProfile({...profile, country: e.target.value})}
+                                >
+                                    <option>United States</option>
+                                    <option>United Kingdom</option>
+                                    <option>Canada</option>
+                                    <option>Germany</option>
+                                    <option>Australia</option>
+                                </select>
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                                   <ChevronDown size={16} />
                                 </div>
-                            </div>
-                         </div>
+                        </div>
                     </div>
                 </div>
 
