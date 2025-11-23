@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Key, Plus, Copy, Trash2, AlertCircle, Eye, EyeOff, Check, Shield, Calendar, Clock } from 'lucide-react';
+import { Key, Plus, Copy, Trash2, Shield, Calendar, Clock, Check } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 
@@ -75,26 +75,26 @@ export const ApiKeys: React.FC = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto animate-fade-in">
+    <section aria-labelledby="api-keys-title" className="max-w-5xl mx-auto animate-fade-in">
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-            <h2 className="text-2xl font-bold text-gray-900">API Keys</h2>
+            <h2 id="api-keys-title" className="text-2xl font-bold text-gray-900">API Keys</h2>
             <p className="text-gray-500 mt-1">Manage authentication tokens for accessing the platform programmatically.</p>
         </div>
         <Button 
             onClick={handleCreateStart} 
             disabled={keys.length >= MAX_KEYS}
-            className={keys.length >= MAX_KEYS ? "opacity-50 cursor-not-allowed" : ""}
+            className={`w-full md:w-auto ${keys.length >= MAX_KEYS ? "opacity-50 cursor-not-allowed" : ""}`}
         >
             <Plus className="w-4 h-4 mr-2" />
             Create New Key
         </Button>
-      </div>
+      </header>
 
       {/* Usage Warning / Info */}
-      <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-8 flex items-start gap-3">
+      <aside className="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-8 flex items-start gap-3">
          <Shield className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
          <div className="text-sm text-blue-800">
             <p className="font-medium">Security Best Practices</p>
@@ -103,7 +103,7 @@ export const ApiKeys: React.FC = () => {
                 Rotate your keys periodically to maintain security.
             </p>
          </div>
-      </div>
+      </aside>
 
       {/* Keys List */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
@@ -120,22 +120,22 @@ export const ApiKeys: React.FC = () => {
                 <p>No active API keys found.</p>
             </div>
         ) : (
-            <div className="divide-y divide-gray-100">
+            <ul className="divide-y divide-gray-100">
                 {keys.map((key) => (
-                    <div key={key.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-gray-50 transition-colors">
+                    <li key={key.id} className="p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-gray-50 transition-colors">
                         <div className="flex-1">
                             <div className="flex items-center gap-3 mb-1">
                                 <h4 className="font-bold text-gray-900">{key.name}</h4>
                                 <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-green-100 text-green-700 tracking-wide">Active</span>
                             </div>
-                            <div className="flex items-center gap-2 font-mono text-sm text-gray-500 bg-gray-100 w-fit px-2 py-1 rounded border border-gray-200">
-                                <Key className="w-3 h-3" />
+                            <div className="flex items-center gap-2 font-mono text-sm text-gray-500 bg-gray-100 w-fit px-2 py-1 rounded border border-gray-200 break-all">
+                                <Key className="w-3 h-3 flex-shrink-0" />
                                 {key.prefix}
                             </div>
                         </div>
                         
-                        <div className="flex items-center gap-6 text-sm text-gray-500">
-                            <div className="flex flex-col items-end">
+                        <div className="flex flex-row md:items-center gap-4 md:gap-6 text-sm text-gray-500 justify-between md:justify-end border-t md:border-t-0 border-gray-100 pt-3 md:pt-0">
+                            <div className="flex flex-col md:items-end">
                                 <span className="flex items-center gap-1.5" title="Created Date">
                                     <Calendar className="w-3.5 h-3.5" /> {key.created}
                                 </span>
@@ -154,18 +154,18 @@ export const ApiKeys: React.FC = () => {
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </li>
                 ))}
-            </div>
+            </ul>
         )}
       </div>
 
       {/* Create Key Modal */}
       {isCreating && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm animate-fade-in" role="dialog" aria-modal="true" aria-labelledby="modal-title">
             <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden scale-100 animate-fade-in-up">
                 <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                    <h3 className="text-lg font-bold text-gray-900">
+                    <h3 id="modal-title" className="text-lg font-bold text-gray-900">
                         {generatedKey ? 'API Key Created' : 'Create New API Key'}
                     </h3>
                     {!generatedKey && (
@@ -192,11 +192,11 @@ export const ApiKeys: React.FC = () => {
                                     <input 
                                         readOnly 
                                         value={generatedKey} 
-                                        className="flex-1 bg-gray-50 border border-gray-200 rounded-l-lg px-4 py-3 text-sm font-mono text-gray-800 focus:outline-none"
+                                        className="flex-1 bg-gray-50 border border-gray-200 rounded-l-lg px-4 py-3 text-sm font-mono text-gray-800 focus:outline-none w-full"
                                     />
                                     <button 
                                         onClick={() => handleCopy(generatedKey, 'modal')}
-                                        className="bg-white border border-l-0 border-gray-200 rounded-r-lg px-4 text-gray-600 hover:bg-gray-50 hover:text-brand-600 transition-colors flex items-center"
+                                        className="bg-white border border-l-0 border-gray-200 rounded-r-lg px-4 text-gray-600 hover:bg-gray-50 hover:text-brand-600 transition-colors flex items-center flex-shrink-0"
                                     >
                                         {copiedId === 'modal' ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
                                     </button>
@@ -229,6 +229,6 @@ export const ApiKeys: React.FC = () => {
             </div>
         </div>
       )}
-    </div>
+    </section>
   );
 };

@@ -285,7 +285,7 @@ export const HelpSupport: React.FC = () => {
     }
 
     return (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+        <section aria-label="Search Results" className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
             <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
                 <h3 className="font-semibold text-gray-900">Search Results ({results.length})</h3>
                 <button onClick={() => setSearchQuery('')} className="text-gray-400 hover:text-gray-600">
@@ -304,21 +304,21 @@ export const HelpSupport: React.FC = () => {
                     </button>
                 ))}
             </div>
-        </div>
+        </section>
     );
   };
 
   const renderHome = () => (
     <div className="animate-fade-in">
       {/* Hero Search */}
-      <div className="bg-brand-900 rounded-2xl p-8 md:p-12 mb-8 text-center relative overflow-hidden shadow-lg">
+      <section role="search" aria-label="Help Center Search" className="bg-brand-900 rounded-2xl p-8 md:p-12 mb-8 text-center relative overflow-hidden shadow-lg">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden opacity-20 pointer-events-none">
              <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-brand-500 blur-3xl"></div>
              <div className="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-purple-500 blur-3xl"></div>
         </div>
 
         <div className="relative z-10 max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold text-white mb-4">How can we help you today?</h2>
+            <h2 id="help-title" className="text-2xl md:text-3xl font-bold text-white mb-4">How can we help you today?</h2>
             <div className="relative group">
                 <Search className="absolute left-4 top-3.5 text-gray-400 w-5 h-5 transition-colors group-focus-within:text-brand-600" />
                 <input 
@@ -338,7 +338,7 @@ export const HelpSupport: React.FC = () => {
                 )}
             </div>
         </div>
-      </div>
+      </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
          {/* Main Content Column */}
@@ -348,32 +348,32 @@ export const HelpSupport: React.FC = () => {
             ) : (
                 <>
                     {/* Documentation Categories */}
-                    <div>
+                    <nav aria-label="Documentation Topics">
                         <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
                             <Book className="w-5 h-5 mr-2 text-brand-600" />
                             Documentation Topics
                         </h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {categoriesData.map((cat) => (
-                                <div 
+                                <button 
                                 key={cat.id} 
                                 onClick={() => handleCategoryClick(cat.id)}
-                                className="group bg-white border border-gray-200 p-5 rounded-xl hover:border-brand-300 hover:shadow-md transition-all cursor-pointer flex flex-col h-full"
+                                className="group bg-white border border-gray-200 p-5 rounded-xl hover:border-brand-300 hover:shadow-md transition-all cursor-pointer flex flex-col h-full text-left"
                                 >
                                     <div className="w-10 h-10 bg-brand-50 rounded-lg flex items-center justify-center mb-3 group-hover:bg-brand-100 transition-colors">
                                         <cat.icon className="w-5 h-5 text-brand-600" />
                                     </div>
                                     <h4 className="font-semibold text-gray-900 mb-1">{cat.title}</h4>
                                     <p className="text-sm text-gray-500 leading-relaxed">{cat.description}</p>
-                                </div>
+                                </button>
                             ))}
                         </div>
-                    </div>
+                    </nav>
 
                     {/* Popular Articles Accordion */}
-                    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                    <section aria-labelledby="popular-articles-title" className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                         <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
-                            <h3 className="font-semibold text-gray-900 flex items-center">
+                            <h3 id="popular-articles-title" className="font-semibold text-gray-900 flex items-center">
                                 <Zap className="w-4 h-4 mr-2 text-orange-500" />
                                 Popular Articles
                             </h3>
@@ -382,43 +382,44 @@ export const HelpSupport: React.FC = () => {
                             {popularArticles.map((article, idx) => {
                                 const isOpen = expandedPopular === article.title;
                                 return (
-                                    <div key={idx} className="group bg-white transition-colors">
+                                    <article key={idx} className="group bg-white transition-colors">
                                         <button 
                                             onClick={() => setExpandedPopular(isOpen ? null : article.title)}
+                                            aria-expanded={isOpen}
                                             className={`w-full px-6 py-4 flex items-center justify-between text-left transition-colors ${isOpen ? 'bg-brand-50/30' : 'hover:bg-gray-50'}`}
                                         >
                                             <div className="flex items-center">
-                                                <FileText className={`w-4 h-4 mr-3 transition-colors ${isOpen ? 'text-brand-600' : 'text-gray-400 group-hover:text-brand-500'}`} />
+                                                <FileText className={`w-4 h-4 mr-3 transition-colors flex-shrink-0 ${isOpen ? 'text-brand-600' : 'text-gray-400 group-hover:text-brand-500'}`} />
                                                 <span className={`font-medium transition-colors ${isOpen ? 'text-brand-700' : 'text-gray-700 group-hover:text-gray-900'}`}>
                                                     {article.title}
                                                 </span>
                                             </div>
                                             {isOpen ? (
-                                                <ChevronDown className="w-4 h-4 text-brand-500" />
+                                                <ChevronDown className="w-4 h-4 text-brand-500 flex-shrink-0" />
                                             ) : (
-                                                <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-brand-400" />
+                                                <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-brand-400 flex-shrink-0" />
                                             )}
                                         </button>
                                         <div 
-                                            className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'}`}
+                                            className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
                                         >
                                             <div className="px-6 pb-5 pl-13 ml-10 text-sm text-gray-600 leading-relaxed border-l-2 border-brand-100">
                                                 {article.content}
                                             </div>
                                         </div>
-                                    </div>
+                                    </article>
                                 );
                             })}
                         </div>
-                    </div>
+                    </section>
                 </>
             )}
          </div>
 
          {/* Contact Form Sidebar */}
-         <div className="lg:col-span-1">
+         <aside className="lg:col-span-1 order-last lg:order-none" aria-labelledby="contact-support-title">
             {renderContactForm()}
-         </div>
+         </aside>
       </div>
     </div>
   );
@@ -431,26 +432,27 @@ export const HelpSupport: React.FC = () => {
     return (
       <div className="animate-fade-in">
         {/* Breadcrumbs */}
-        <nav className="flex items-center text-sm text-gray-500 mb-6">
+        <nav aria-label="Breadcrumb" className="flex items-center text-sm text-gray-500 mb-6 flex-wrap gap-1">
           <button onClick={() => setView('home')} className="hover:text-brand-600 transition-colors flex items-center">
              <Home className="w-4 h-4 mr-1" />
              Help Center
           </button>
           <ChevronRight className="w-4 h-4 mx-2 text-gray-300" />
-          <span className="font-medium text-gray-900">{currentCategoryData.title}</span>
+          <span className="font-medium text-gray-900 whitespace-nowrap">{currentCategoryData.title}</span>
           <ChevronRight className="w-4 h-4 mx-2 text-gray-300" />
-          <span className="text-brand-600 truncate max-w-[200px]">{currentArticleData?.title}</span>
+          <span className="text-brand-600 truncate max-w-[150px] md:max-w-[200px]">{currentArticleData?.title}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-           {/* Article Navigation Sidebar */}
-           <div className="hidden lg:block lg:col-span-1 sticky top-6">
+           {/* Article Navigation Sidebar (Desktop) */}
+           <nav className="hidden lg:block lg:col-span-1 sticky top-6" aria-label="Article Navigation">
               <h3 className="font-bold text-gray-900 mb-3 px-2">{currentCategoryData.title}</h3>
               <div className="space-y-1">
                  {currentCategoryData.articles.map((article) => (
                     <button
                       key={article.id}
                       onClick={() => handleArticleClick(article.id)}
+                      aria-current={activeArticle === article.id ? 'page' : undefined}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                         activeArticle === article.id 
                         ? 'bg-brand-50 text-brand-700' 
@@ -469,14 +471,34 @@ export const HelpSupport: React.FC = () => {
                 <ChevronLeft className="w-4 h-4 mr-1" />
                 Back to Categories
               </button>
-           </div>
+           </nav>
+
+            {/* Mobile Article Navigation (Dropdown style) */}
+            <div className="lg:hidden w-full mb-4">
+                <label htmlFor="article-select" className="block text-sm font-medium text-gray-700 mb-1">Select Article</label>
+                <div className="relative">
+                    <select
+                        id="article-select"
+                        value={activeArticle || ''}
+                        onChange={(e) => handleArticleClick(e.target.value)}
+                        className="w-full appearance-none bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-brand-500 focus:border-brand-500 block p-3 pr-8"
+                    >
+                        {currentCategoryData.articles.map((article) => (
+                            <option key={article.id} value={article.id}>
+                                {article.title}
+                            </option>
+                        ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-3.5 w-4 h-4 text-gray-500 pointer-events-none" />
+                </div>
+            </div>
 
            {/* Main Content Area */}
-           <div className="lg:col-span-3">
-              <div className="bg-white border border-gray-200 rounded-xl p-8 md:p-10 shadow-sm min-h-[500px]">
+           <div className="lg:col-span-3 w-full">
+              <div className="bg-white border border-gray-200 rounded-xl p-6 md:p-10 shadow-sm min-h-[500px]">
                  {currentArticleData ? (
                    <article className="prose prose-slate max-w-none">
-                      <h1 className="text-3xl font-bold text-gray-900 mb-6 pb-4 border-b border-gray-100">
+                      <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 pb-4 border-b border-gray-100">
                         {currentArticleData.title}
                       </h1>
                       {currentArticleData.content}
@@ -486,8 +508,8 @@ export const HelpSupport: React.FC = () => {
                  )}
 
                  {/* Footer Navigation */}
-                 <div className="mt-12 pt-8 border-t border-gray-100 flex justify-between items-center">
-                    <div className="text-sm text-gray-400">
+                 <nav aria-label="Article Footer Navigation" className="mt-12 pt-8 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div className="text-sm text-gray-400 text-center sm:text-left">
                       Was this article helpful? 
                       <button className="ml-2 text-brand-600 hover:underline">Yes</button> • 
                       <button className="ml-2 text-brand-600 hover:underline">No</button>
@@ -498,16 +520,16 @@ export const HelpSupport: React.FC = () => {
                         onClick={handleNextArticle}
                         className="group flex items-center text-right text-sm font-medium text-brand-600 hover:text-brand-800 transition-colors"
                       >
-                        <div>
+                        <div className="text-right">
                           <div className="text-xs text-gray-400 font-normal uppercase tracking-wider mb-0.5">Next Article</div>
-                          {nextArticleTitle}
+                          <div className="truncate max-w-[200px]">{nextArticleTitle}</div>
                         </div>
-                        <div className="w-8 h-8 rounded-full bg-brand-50 group-hover:bg-brand-100 flex items-center justify-center ml-3 transition-colors">
+                        <div className="w-8 h-8 rounded-full bg-brand-50 group-hover:bg-brand-100 flex items-center justify-center ml-3 transition-colors flex-shrink-0">
                           <ArrowRight className="w-4 h-4" />
                         </div>
                       </button>
                     )}
-                 </div>
+                 </nav>
               </div>
            </div>
         </div>
@@ -518,7 +540,7 @@ export const HelpSupport: React.FC = () => {
   const renderContactForm = () => (
     <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 sticky top-6">
       <div className="mb-6">
-          <h3 className="text-lg font-bold text-gray-900 mb-1">Contact Support</h3>
+          <h3 id="contact-support-title" className="text-lg font-bold text-gray-900 mb-1">Contact Support</h3>
           <p className="text-sm text-gray-500">Can't find what you need? Send us a message.</p>
       </div>
 
@@ -590,8 +612,8 @@ export const HelpSupport: React.FC = () => {
   );
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <section aria-labelledby="help-title" className="max-w-6xl mx-auto">
       {view === 'home' ? renderHome() : renderCategoryView()}
-    </div>
+    </section>
   );
 };

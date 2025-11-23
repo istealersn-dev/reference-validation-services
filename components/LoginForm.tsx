@@ -101,10 +101,10 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
 
   return (
     <div className="w-full space-y-8">
-      <div className="space-y-2">
+      <header className="space-y-2">
         <h2 className="text-3xl font-bold tracking-tight text-gray-900">Welcome back</h2>
         <p className="text-gray-500 font-light">Enter your credentials to access the dashboard.</p>
-      </div>
+      </header>
 
       {/* Social / SSO Login */}
       <div>
@@ -201,7 +201,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
           </button>
         </div>
 
-        <Button type="primary" fullWidth isLoading={isLoading} className="h-12 text-base shadow-brand-600/25 hover:shadow-brand-600/40">
+        <Button type="submit" fullWidth isLoading={isLoading} className="h-12 text-base shadow-brand-600/25 hover:shadow-brand-600/40">
           <span className="mr-2">Sign In</span>
           {!isLoading && <ArrowRight size={18} />}
         </Button>

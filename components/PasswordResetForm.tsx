@@ -165,7 +165,7 @@ export const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToLo
   return (
     <div className="w-full space-y-8 animate-fade-in-up">
       {/* Header */}
-      <div className="space-y-2">
+      <header className="space-y-2">
         <button 
           onClick={onBackToLogin}
           className="inline-flex items-center text-sm text-gray-400 hover:text-gray-600 transition-colors mb-4 group"
@@ -179,7 +179,7 @@ export const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToLo
         <p className="text-gray-500 font-light">
           {getSubHeaderText()}
         </p>
-      </div>
+      </header>
 
       {/* Step 1: Request Code */}
       {step === 'request' && (

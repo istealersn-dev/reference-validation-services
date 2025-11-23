@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, CreditCard, AlertTriangle, Camera, Mail, MapPin, Globe, Shield, Trash2, Check, CreditCard as CardIcon } from 'lucide-react';
+import { User, CreditCard, AlertTriangle, Camera, Mail, MapPin, Globe, Shield, Trash2, Check, CreditCard as CardIcon, Briefcase } from 'lucide-react';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { OrcidIcon } from '../icons/OrcidIcon';
@@ -16,6 +16,7 @@ export const Settings: React.FC = () => {
     familyName: 'Doe',
     displayName: 'Jane Doe',
     email: 'jane.doe@scholarly-pub.com',
+    jobTitle: 'Editorial Manager',
     country: 'United States',
     orcid: '0000-0002-1825-0097',
     isOrcidLinked: true
@@ -30,20 +31,22 @@ export const Settings: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in">
+    <section aria-labelledby="settings-title" className="max-w-4xl mx-auto animate-fade-in">
       
       {/* Page Header */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Account Settings</h2>
+      <header className="mb-8">
+        <h2 id="settings-title" className="text-2xl font-bold text-gray-900">Account Settings</h2>
         <p className="text-gray-500 mt-1">Manage your personal information, billing details, and security preferences.</p>
-      </div>
+      </header>
 
       {/* Tabs Navigation */}
-      <div className="flex space-x-1 bg-gray-100/80 p-1 rounded-xl mb-8 w-fit">
+      <nav aria-label="Settings Tabs" className="flex space-x-1 bg-gray-100/80 p-1 rounded-xl mb-8 w-full md:w-fit overflow-x-auto" role="tablist">
         <button
+          role="tab"
+          aria-selected={activeTab === 'profile'}
           onClick={() => setActiveTab('profile')}
           className={`
-            flex items-center px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-200
+            flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap flex-1 md:flex-none
             ${activeTab === 'profile' 
               ? 'bg-white text-brand-700 shadow-sm' 
               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'
@@ -54,9 +57,11 @@ export const Settings: React.FC = () => {
           Profile
         </button>
         <button
+          role="tab"
+          aria-selected={activeTab === 'billing'}
           onClick={() => setActiveTab('billing')}
           className={`
-            flex items-center px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-200
+            flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap flex-1 md:flex-none
             ${activeTab === 'billing' 
               ? 'bg-white text-brand-700 shadow-sm' 
               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'
@@ -67,9 +72,11 @@ export const Settings: React.FC = () => {
           Billing
         </button>
         <button
+          role="tab"
+          aria-selected={activeTab === 'misc'}
           onClick={() => setActiveTab('misc')}
           className={`
-            flex items-center px-5 py-2.5 text-sm font-medium rounded-lg transition-all duration-200
+            flex items-center justify-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 whitespace-nowrap flex-1 md:flex-none
             ${activeTab === 'misc' 
               ? 'bg-white text-red-600 shadow-sm ring-1 ring-red-50' 
               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200/50'
@@ -79,13 +86,13 @@ export const Settings: React.FC = () => {
           <AlertTriangle className="w-4 h-4 mr-2" />
           Danger Zone
         </button>
-      </div>
+      </nav>
 
       {/* CONTENT AREAS */}
       
       {/* --- PROFILE TAB --- */}
       {activeTab === 'profile' && (
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        <section role="tabpanel" className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
           <div className="p-6 md:p-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-6">Personal Information</h3>
             
@@ -140,6 +147,15 @@ export const Settings: React.FC = () => {
                     placeholder="How your name appears in the header"
                 />
 
+                <Input 
+                    label="Job Title"
+                    id="jobTitle"
+                    icon={Briefcase}
+                    value={profile.jobTitle}
+                    onChange={(e) => setProfile({...profile, jobTitle: e.target.value})}
+                    placeholder="e.g. Senior Editor"
+                />
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <Input 
                         label="Email Address"
@@ -179,13 +195,13 @@ export const Settings: React.FC = () => {
 
                 {/* ORCID Section */}
                 <div className="bg-gray-50 rounded-xl p-5 border border-gray-200">
-                    <div className="flex items-start justify-between">
-                        <div className="flex items-center mb-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                        <div className="flex items-center">
                             <OrcidIcon className="w-6 h-6 mr-2" />
                             <span className="font-bold text-gray-700">ORCID iD</span>
                         </div>
                         {profile.isOrcidLinked && (
-                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 w-fit">
                                 <Check className="w-3 h-3 mr-1" /> Verified
                              </span>
                         )}
@@ -199,7 +215,7 @@ export const Settings: React.FC = () => {
                          />
                          {profile.isOrcidLinked && (
                              <p className="text-xs text-gray-500 mt-2 flex items-center">
-                                <Shield className="w-3 h-3 mr-1" />
+                                <Shield className="w-3 h-3 mr-1 flex-shrink-0" />
                                 Linked securely via ORCID OAuth. Cannot be edited manually.
                              </p>
                          )}
@@ -207,30 +223,30 @@ export const Settings: React.FC = () => {
                 </div>
 
                 <div className="pt-4 border-t border-gray-100 flex justify-end">
-                    <Button type="submit" isLoading={isLoading}>
+                    <Button type="submit" isLoading={isLoading} className="w-full sm:w-auto">
                         Save Changes
                     </Button>
                 </div>
               </form>
             </div>
           </div>
-        </div>
+        </section>
       )}
 
       {/* --- BILLING TAB --- */}
       {activeTab === 'billing' && (
-        <div className="space-y-6">
+        <section role="tabpanel" className="space-y-6">
             {/* Current Plan Card */}
-            <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden p-6 md:p-8 relative">
+            <article className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden p-6 md:p-8 relative">
                 <div className="absolute top-0 right-0 bg-gradient-to-bl from-brand-100 to-transparent w-32 h-32 rounded-bl-full opacity-50 pointer-events-none"></div>
                 
-                <div className="flex justify-between items-start mb-6 relative z-10">
+                <div className="flex flex-col md:flex-row justify-between items-start mb-6 relative z-10 gap-6">
                     <div>
                         <h3 className="text-sm font-semibold text-brand-600 uppercase tracking-wider mb-1">Current Subscription</h3>
                         <h2 className="text-3xl font-bold text-gray-900">Pro Plan</h2>
                         <p className="text-gray-500 mt-2">Perfect for independent researchers and small editorial teams.</p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-left md:text-right">
                          <span className="text-3xl font-bold text-gray-900">$49</span>
                          <span className="text-gray-500">/month</span>
                          <div className="mt-2">
@@ -259,14 +275,14 @@ export const Settings: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="mt-8 flex gap-3">
+                <div className="mt-8 flex flex-col sm:flex-row gap-3">
                     <Button variant="outline">Download Invoices</Button>
                     <Button>Manage Subscription</Button>
                 </div>
-            </div>
+            </article>
 
-            {/* Usage Stats (Optional Flair) */}
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6">
+            {/* Usage Stats */}
+            <article className="bg-gray-50 border border-gray-200 rounded-xl p-6">
                 <h4 className="text-sm font-semibold text-gray-900 mb-4">Monthly Usage</h4>
                 <div className="space-y-4">
                     <div>
@@ -288,13 +304,13 @@ export const Settings: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </article>
+        </section>
       )}
 
       {/* --- MISC TAB (Danger Zone) --- */}
       {activeTab === 'misc' && (
-        <div className="bg-white border border-red-100 rounded-2xl shadow-sm overflow-hidden">
+        <section role="tabpanel" className="bg-white border border-red-100 rounded-2xl shadow-sm overflow-hidden">
             <div className="p-6 md:p-8">
                 <div className="flex items-center mb-6">
                     <div className="w-10 h-10 bg-red-50 rounded-full flex items-center justify-center mr-4">
@@ -314,7 +330,7 @@ export const Settings: React.FC = () => {
                                 Permanently remove all your past validation reports and uploaded files.
                             </p>
                         </div>
-                        <Button variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 whitespace-nowrap">
+                        <Button variant="outline" className="border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 whitespace-nowrap w-full md:w-auto">
                             Clear History
                         </Button>
                     </div>
@@ -326,7 +342,7 @@ export const Settings: React.FC = () => {
                                 Permanently delete your account and all associated data. This action cannot be undone and your subscription will be cancelled immediately.
                             </p>
                         </div>
-                        <Button className="bg-red-600 hover:bg-red-700 text-white shadow-red-600/20 whitespace-nowrap">
+                        <Button className="bg-red-600 hover:bg-red-700 text-white shadow-red-600/20 whitespace-nowrap w-full md:w-auto">
                             <Trash2 className="w-4 h-4 mr-2" />
                             Delete Account
                         </Button>
@@ -338,9 +354,9 @@ export const Settings: React.FC = () => {
                     Need help? Contact <a href="#" className="underline font-medium">support@scholarly-pub.com</a> before taking drastic actions.
                 </p>
             </div>
-        </div>
+        </section>
       )}
 
-    </div>
+    </section>
   );
 };

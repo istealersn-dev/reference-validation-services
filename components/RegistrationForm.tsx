@@ -150,10 +150,10 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onLoginClick
 
   return (
     <div className="w-full space-y-8">
-      <div className="space-y-2">
+      <header className="space-y-2">
         <h2 className="text-3xl font-bold tracking-tight text-gray-900">Sign up</h2>
         <p className="text-gray-500 font-light">Join our community of scholarly publishers.</p>
-      </div>
+      </header>
 
       {/* Social / SSO Signup */}
       <div>

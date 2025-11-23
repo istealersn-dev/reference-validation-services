@@ -14,32 +14,32 @@ export const History: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto animate-fade-in">
+    <section aria-labelledby="history-title" className="max-w-6xl mx-auto animate-fade-in">
       {/* Header / Filter Section */}
-      <div className="flex flex-col md:flex-row justify-between items-end md:items-center mb-8 gap-4">
+      <header className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
         <div>
-            <h2 className="text-2xl font-bold text-gray-900">Validation History</h2>
+            <h2 id="history-title" className="text-2xl font-bold text-gray-900">Validation History</h2>
             <p className="text-gray-500 mt-1">View and download past reference validation reports.</p>
         </div>
-        <div className="flex gap-3">
-             <div className="relative group">
+        <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+             <div className="relative group w-full sm:w-64">
                 <Search className="w-4 h-4 absolute left-3 top-3 text-gray-400 group-focus-within:text-brand-500 transition-colors" />
                 <input 
                     type="text" 
                     placeholder="Search files..." 
-                    className="pl-9 pr-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none w-64 transition-all"
+                    className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-gray-200 bg-white text-sm focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 outline-none transition-all"
                 />
              </div>
-             <Button variant="outline" className="bg-white hover:bg-gray-50 text-gray-600 border-gray-200">
+             <Button variant="outline" className="bg-white hover:bg-gray-50 text-gray-600 border-gray-200 w-full sm:w-auto">
                 <Filter className="w-4 h-4 mr-2" /> Filter
              </Button>
         </div>
-      </div>
+      </header>
 
       {/* Table Card */}
       <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
+        <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-left border-collapse min-w-[800px]">
                 <thead>
                     <tr className="bg-gray-50/50 border-b border-gray-200">
                         <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Date & Time</th>
@@ -67,10 +67,10 @@ export const History: React.FC = () => {
                             </td>
                             <td className="py-4 px-6">
                                 <div className="flex items-center">
-                                    <div className="p-2 rounded-lg bg-brand-50 text-brand-600 mr-3 group-hover:bg-brand-100 transition-colors">
+                                    <div className="p-2 rounded-lg bg-brand-50 text-brand-600 mr-3 group-hover:bg-brand-100 transition-colors flex-shrink-0">
                                         <FileText className="w-4 h-4" />
                                     </div>
-                                    <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors">{item.filename}</span>
+                                    <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors truncate max-w-[200px]">{item.filename}</span>
                                 </div>
                             </td>
                             <td className="py-4 px-6 text-center">
@@ -89,9 +89,9 @@ export const History: React.FC = () => {
                                 )}
                             </td>
                             <td className="py-4 px-6">
-                                <div className="flex justify-start gap-2 opacity-70 group-hover:opacity-100 transition-opacity">
+                                <div className="flex justify-start gap-2 opacity-100 md:opacity-70 group-hover:opacity-100 transition-opacity">
                                     <button 
-                                        className="flex items-center px-2 py-1.5 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded border border-green-200 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500/30"
+                                        className="flex items-center px-2 py-1.5 text-xs font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded border border-green-200 transition-colors focus:outline-none focus:ring-2 focus:ring-green-500/30 whitespace-nowrap"
                                         title="Download Validated CSV"
                                     >
                                         <Download className="w-3 h-3 mr-1.5" />
@@ -100,7 +100,7 @@ export const History: React.FC = () => {
                                     
                                     {item.invalid > 0 && (
                                         <button 
-                                            className="flex items-center px-2 py-1.5 text-xs font-medium text-orange-700 bg-orange-50 hover:bg-orange-100 rounded border border-orange-200 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500/30"
+                                            className="flex items-center px-2 py-1.5 text-xs font-medium text-orange-700 bg-orange-50 hover:bg-orange-100 rounded border border-orange-200 transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500/30 whitespace-nowrap"
                                             title="Download Not Validated CSV"
                                         >
                                             <Download className="w-3 h-3 mr-1.5" />
@@ -114,15 +114,15 @@ export const History: React.FC = () => {
                 </tbody>
             </table>
         </div>
-        {/* Pagination (Visual Only) */}
-        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between bg-gray-50/30">
-            <span className="text-sm text-gray-500">Showing <span className="font-medium text-gray-900">1-6</span> of <span className="font-medium text-gray-900">24</span> results</span>
-            <div className="flex gap-2">
+        {/* Pagination */}
+        <div className="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4 bg-gray-50/30">
+            <span className="text-sm text-gray-500 text-center sm:text-left">Showing <span className="font-medium text-gray-900">1-6</span> of <span className="font-medium text-gray-900">24</span> results</span>
+            <div className="flex gap-2 w-full sm:w-auto justify-center sm:justify-end">
                 <Button variant="outline" className="h-8 px-3 text-xs bg-white hover:bg-gray-50" disabled>Previous</Button>
                 <Button variant="outline" className="h-8 px-3 text-xs bg-white hover:bg-gray-50">Next</Button>
             </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 };
