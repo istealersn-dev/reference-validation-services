@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Download, CheckCircle, AlertCircle, Search, Filter, Calendar, Clock } from 'lucide-react';
+import { FileText, Download, Search, Filter, Calendar, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 export const History: React.FC = () => {

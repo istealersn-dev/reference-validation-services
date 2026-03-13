@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { LoginForm } from '@/components/LoginForm';
 import { RegistrationForm } from '@/components/RegistrationForm';
@@ -5,12 +6,14 @@ import { PasswordResetForm } from '@/components/PasswordResetForm';
 import { BrandSidebar } from '@/components/BrandSidebar';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 import { ContactForm } from '@/components/ContactForm';
+import { NotFound } from '@/components/NotFound';
 import { Modal } from '@/components/ui/Modal';
 import { CheckCircle2 } from 'lucide-react';
 
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentView, setCurrentView] = useState<'login' | 'register' | 'forgot-password'>('login');
+  // Default view is now 'login'
+  const [currentView, setCurrentView] = useState<'login' | 'register' | 'forgot-password' | 'not-found'>('login');
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
 
   const handleLoginSuccess = () => {
@@ -19,13 +22,37 @@ const App: React.FC = () => {
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    setCurrentView('login');
+    setCurrentView('login'); // Return to login page on logout
   };
 
   if (isAuthenticated) {
     return <Dashboard onLogout={handleLogout} />;
   }
 
+  // Render 404 Page (Full Screen)
+  if (currentView === 'not-found') {
+    return (
+      <>
+        <NotFound 
+          onGoHome={() => setCurrentView('login')} 
+          onContactSupport={() => setIsSupportModalOpen(true)}
+        />
+        <Modal
+          isOpen={isSupportModalOpen}
+          onClose={() => setIsSupportModalOpen(false)}
+          title="Contact Support"
+          className="max-w-lg"
+        >
+          <div className="mb-6">
+             <p className="text-sm text-gray-500">Can't find what you need? Send us a message.</p>
+          </div>
+          <ContactForm />
+        </Modal>
+      </>
+    );
+  }
+
+  // Auth Layout (Split Screen)
   return (
     <div className="min-h-screen w-full flex overflow-hidden bg-white selection:bg-brand-100 selection:text-brand-900">
       {/* Left Side - Brand & Visuals (Hidden on mobile, visible on large screens) */}
@@ -59,15 +86,25 @@ const App: React.FC = () => {
           )}
           
           <div className="mt-12 text-center border-t border-gray-100 pt-6">
-            <p className="text-sm text-gray-400">
-              Need help? <a href="#" onClick={(e) => { e.preventDefault(); setIsSupportModalOpen(true); }} className="font-medium text-brand-600 hover:text-brand-500 transition-colors">Contact Support</a>
-            </p>
+            <div className="flex flex-col gap-2">
+              <p className="text-sm text-gray-400">
+                Need help? <a href="#" onClick={(e) => { e.preventDefault(); setIsSupportModalOpen(true); }} className="font-medium text-brand-600 hover:text-brand-500 transition-colors">Contact Support</a>
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Footer decoration - Pushed to bottom via flex */}
         <footer className="mt-auto pt-6 text-center w-full text-xs text-gray-300 lg:text-gray-400">
           &copy; {new Date().getFullYear()} Kriyadocs RVS. All rights reserved.
+          <span className="mx-2 opacity-50">|</span>
+          <button 
+            onClick={() => setCurrentView('not-found')} 
+            className="hover:text-brand-600 transition-colors"
+            title="Preview 404 Page"
+          >
+            Preview 404
+          </button>
         </footer>
       </main>
 

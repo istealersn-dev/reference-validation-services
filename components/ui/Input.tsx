@@ -46,6 +46,8 @@ export const Input: React.FC<InputProps> = ({
         <input
           {...props}
           id={id}
+          aria-invalid={!!error}
+          aria-describedby={error ? `${id}-error` : props['aria-describedby']}
           className={`
             w-full bg-transparent border-none outline-none py-3 text-gray-900 text-base placeholder-gray-400
             disabled:cursor-not-allowed disabled:opacity-50
@@ -70,8 +72,12 @@ export const Input: React.FC<InputProps> = ({
       </div>
       
       {error && (
-        <div className="mt-1.5 ml-1 text-xs text-red-500 font-medium flex items-start animate-fade-in">
-          <span className="mr-1.5 text-[10px] mt-[2px]">●</span> 
+        <div 
+          id={`${id}-error`}
+          role="alert"
+          className="mt-1.5 ml-1 text-xs text-red-500 font-medium flex items-start animate-fade-in"
+        >
+          <span className="mr-1.5 text-[10px] mt-[2px]" aria-hidden="true">●</span> 
           <span>{error}</span>
         </div>
       )}

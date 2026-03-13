@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Bell, ChevronDown, User, CreditCard, LogOut, Menu, FileText, Key, Settings, Download, Shield } from 'lucide-react';
+import { Bell, ChevronDown, User, CreditCard, LogOut, Menu, FileText, Key, Download, Shield } from 'lucide-react';
 
 type DashboardView = 'dashboard' | 'history' | 'settings' | 'api-keys' | 'help-support';
 
@@ -95,7 +95,7 @@ export const Header: React.FC<HeaderProps> = ({
       setIsNotificationOpen(!isNotificationOpen);
       if (!isNotificationOpen) {
           setHasUnread(false);
-          // Close profile dropdown if open
+          // Close profile dropdown if open to avoid overlap
           setIsDropdownOpen(false);
       }
   };
@@ -103,18 +103,20 @@ export const Header: React.FC<HeaderProps> = ({
   const handleProfileClick = () => {
       setIsDropdownOpen(!isDropdownOpen);
       if (!isDropdownOpen) {
-          // Close notification dropdown if open
+          // Close notification dropdown if open to avoid overlap
           setIsNotificationOpen(false);
       }
   };
 
   return (
+    // 'sticky' is required here to keep the header visible while scrolling
     <header className="bg-white border-b border-gray-200 h-16 px-4 md:px-6 flex items-center justify-between shadow-sm z-20 sticky top-0">
-      {/* Left Side: Menu Toggle & Title */}
+      
+      {/* Left Side: Flexbox Layout for Menu Toggle & Titles */}
       <div className="flex items-center gap-3 md:gap-4 overflow-hidden">
         <button 
           onClick={onMenuClick}
-          className="lg:hidden p-2 -ml-2 text-gray-500 hover:text-brand-600 hover:bg-gray-100 rounded-lg transition-colors"
+          className="lg:hidden p-2 -ml-2 text-gray-500 hover:text-brand-600 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center"
           aria-label="Open menu"
         >
           <Menu className="w-6 h-6" />
@@ -127,23 +129,27 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
       </div>
 
-      {/* Right Side: Actions */}
+      {/* Right Side: Flexbox Layout for Actions */}
       <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
         
         {/* Notification Bell */}
+        {/* 'relative' needed here so the Badge and Dropdown position themselves relative to this button */}
         <div className="relative" ref={notificationRef}>
             <button 
                 onClick={handleNotificationClick}
-                className={`p-2 text-gray-500 hover:bg-gray-100 rounded-full transition-colors relative ${isNotificationOpen ? 'bg-gray-100 text-brand-600' : ''}`}
+                className={`p-2 rounded-full transition-colors relative flex items-center justify-center ${isNotificationOpen ? 'bg-gray-100 text-brand-600' : 'text-gray-500 hover:bg-gray-100'}`}
                 aria-label="Notifications"
+                aria-haspopup="true"
+                aria-expanded={isNotificationOpen}
             >
                 <Bell className="w-5 h-5" />
                 {hasUnread && (
-                    <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                    // 'absolute' required to overlay the dot on the icon
+                    <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white pointer-events-none"></span>
                 )}
             </button>
 
-            {/* Notifications Dropdown */}
+            {/* Notifications Dropdown - 'absolute' required to float over content */}
             {isNotificationOpen && (
                 <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-xl shadow-xl border border-gray-100 py-2 animate-fade-in z-50 origin-top-right">
                     <div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -156,7 +162,7 @@ export const Header: React.FC<HeaderProps> = ({
                                 key={item.id} 
                                 className="w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors flex items-start gap-3 border-b border-gray-50 last:border-0 group"
                             >
-                                <div className={`p-2 rounded-full flex-shrink-0 ${item.bg} ${item.color}`}>
+                                <div className={`p-2 rounded-full flex-shrink-0 ${item.bg} ${item.color} flex items-center justify-center`}>
                                     <item.icon size={16} />
                                 </div>
                                 <div className="flex-1 min-w-0">
@@ -187,10 +193,14 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="h-6 w-px bg-gray-200 mx-1 md:mx-2"></div>
 
         {/* Profile Dropdown */}
+        {/* 'relative' needed for the dropdown positioning */}
         <div className="relative" ref={dropdownRef}>
           <button 
             onClick={handleProfileClick}
             className={`flex items-center space-x-2 md:space-x-3 pl-1 md:pl-2 py-1 pr-1 rounded-full hover:bg-gray-50 transition-colors border border-transparent ${isDropdownOpen ? 'bg-gray-50 border-gray-200' : 'hover:border-gray-200'}`}
+            aria-haspopup="true"
+            aria-expanded={isDropdownOpen}
+            aria-label="User menu"
           >
             <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-brand-500 to-brand-700 p-0.5">
               <img 

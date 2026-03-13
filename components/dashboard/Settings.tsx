@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { User, CreditCard, AlertTriangle, Camera, Mail, Globe, Shield, Trash2, Check, CreditCard as CardIcon, Briefcase, ChevronDown, AlertCircle } from 'lucide-react';
+import { User, CreditCard, AlertTriangle, Camera, Mail, Globe, Shield, Trash2, Check, CreditCard as CardIcon, Briefcase, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';

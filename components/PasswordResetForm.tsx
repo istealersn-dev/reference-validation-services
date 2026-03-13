@@ -225,7 +225,7 @@ export const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToLo
             onChange={(e) => {
                 const val = e.target.value.replace(/[^0-9]/g, '').slice(0, 6);
                 setCode(val);
-                if (errors.code) setErrors(prev => ({ ...prev, code: undefined }));
+                if (errors.code) setErrors(prev => ({ ...prev, code: '' }));
             }}
             error={errors.code}
             placeholder="000000"
@@ -263,7 +263,7 @@ export const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToLo
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
-                if (errors.password) setErrors(prev => ({ ...prev, password: undefined }));
+                if (errors.password) setErrors(prev => ({ ...prev, password: '' }));
               }}
               error={errors.password}
               className="mb-2"
@@ -310,7 +310,7 @@ export const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onBackToLo
             value={confirmPassword}
             onChange={(e) => {
               setConfirmPassword(e.target.value);
-              if (errors.confirmPassword) setErrors(prev => ({ ...prev, confirmPassword: undefined }));
+              if (errors.confirmPassword) setErrors(prev => ({ ...prev, confirmPassword: '' }));
             }}
             error={errors.confirmPassword}
             rightElement={

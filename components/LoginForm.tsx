@@ -99,7 +99,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onRegisterClick, onForgotP
     
     try {
         // Simulate OAuth Handshake
-        await new Promise((resolve, reject) => setTimeout(() => {
+        await new Promise((resolve) => setTimeout(() => {
              // Randomly simulate failure for demonstration if 'fail' is in email input (optional trick) 
              // or just standard success for happy path.
              // Uncomment next line to test error state manually if needed:
